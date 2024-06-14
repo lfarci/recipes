@@ -1,0 +1,23 @@
+﻿** Highlights
+     Tables that will be recreated with data migrated
+       [dbo].[Recipe]
+       [dbo].[User]
+     Clustered indexes that will be dropped
+       None
+     Clustered indexes that will be created
+       None
+     Possible data issues
+       None
+
+** User actions
+     Recreate table
+       [dbo].[Recipe] (Table)
+       [dbo].[User] (Table)
+
+** Supporting actions
+     Drop
+       [dbo].[FK_Recipe_To_User] (Foreign Key)
+     Create
+       [dbo].[FK_Recipe_To_User] (Foreign Key)
+       [dbo].[CK_User_FirstName_NotEmpty] (Check Constraint)
+       [dbo].[CK_User_LastName_NotEmpty] (Check Constraint)
