@@ -5,6 +5,8 @@ VisualStudioVersion = 17.10.34902.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Recipes.Database", "src\Recipes.Database\Recipes.Database.sqlproj", "{EF645E71-4624-4A02-AA18-C554E02277B4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recipes.Api", "src\Recipes.Api\Recipes.Api.csproj", "{D74A78F2-1549-4A71-A022-BEFBE55124D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +19,10 @@ Global
 		{EF645E71-4624-4A02-AA18-C554E02277B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF645E71-4624-4A02-AA18-C554E02277B4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EF645E71-4624-4A02-AA18-C554E02277B4}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{D74A78F2-1549-4A71-A022-BEFBE55124D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D74A78F2-1549-4A71-A022-BEFBE55124D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D74A78F2-1549-4A71-A022-BEFBE55124D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D74A78F2-1549-4A71-A022-BEFBE55124D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
