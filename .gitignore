@@ -482,4 +482,9 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
-/src/Recipes.Api/Recipes.Api.http
+
+# Avoid any unwanted token leakage
+/src/**/*.http
+
+src/**/bin
+src/**/obj
