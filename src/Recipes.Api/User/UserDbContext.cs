@@ -8,6 +8,6 @@ namespace Recipes.Api.Users
         public UserDbContext(DbContextOptions<UserDbContext> options)
             : base(options) { }
 
-        public DbSet<UserModel> Users { get; set; }
+        public DbSet<UserEntity> Users { get; set; }
     }
 }

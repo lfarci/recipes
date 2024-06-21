@@ -8,29 +8,46 @@ namespace Recipes.Api.User
     {
         public static void MapUserEndpoints(this IEndpointRouteBuilder app)
         {
-            app.MapGet("/profile", GetProfile).WithName("Profile").WithOpenApi().RequireAuthorization();
+            app.MapGet("/users/{userId}", GetUser).WithName("GetUser").WithOpenApi().RequireAuthorization();
             app.MapPost("/users", CreateUser).WithName("CreateUser").WithOpenApi().RequireAuthorization();
         }
 
-        private static IResult GetProfile(HttpContext httpContext)
+        private static async Task<IResult> GetUser(HttpContext httpContext, long userId, UserDbContext dbContext)
         {
             httpContext.VerifyUserHasAnyAcceptedScope("Recipes.User.Read");
 
-            return Results.Ok(new
+            var entity = await dbContext.Users.FindAsync(userId);
+
+            if (entity == null)
             {
-                Name = httpContext?.User?.Identity?.Name ?? "Unknown",
-                Email = httpContext?.User?.FindFirst(ClaimTypes.Email)?.Value ?? "Unknown"
-            });
+                return Results.NotFound();
+            }
+
+            return Results.Ok(new { entity.FirstName, entity.LastName, entity.Email });
         }
 
-        private static async Task<IResult> CreateUser(HttpContext httpContext, UserModel user, UserDbContext dbContext)
+        private static async Task<IResult> CreateUser(HttpContext httpContext, UserRequest user, UserDbContext dbContext)
         {
             httpContext.VerifyUserHasAnyAcceptedScope("Recipes.User.Write");
 
-            dbContext.Users.Add(user);
+            var emailClaim = httpContext?.User?.FindFirst(ClaimTypes.Email);
+            if (emailClaim == null)
+            {
+                return Results.BadRequest("Email not found.");
+            }
+
+            var email = emailClaim.Value;
+
+            var createdUser = dbContext.Users.Add(new UserEntity()
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = email
+            });
+
             await dbContext.SaveChangesAsync();
 
-            return Results.Created();
+            return Results.Created("GetUser", new { createdUser.Entity.Id });
         }
     }
 }
