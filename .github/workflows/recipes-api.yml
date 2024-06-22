@@ -2,7 +2,8 @@ name: Build and deploy Recipes.Api
 
 env:
   AZURE_WEBAPP_NAME: lfarci-dev-recipes-api
-  DOTNET_VERSION: '8'
+  AZURE_WEBAPP_PACKAGE_PATH: '.' 
+  DOTNET_VERSION: '8.0.x'
   RECIPES_API_CSPROJ: 'src/Recipes.Api/Recipes.Api.csproj'
 
 on:
@@ -60,10 +61,12 @@ jobs:
         with:
           name: .net-app
 
+      - run: ls
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ${{env.DOTNET_ROOT}}/myapp
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
