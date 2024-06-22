@@ -2,7 +2,7 @@ name: Build and deploy Recipes.Api
 
 env:
   AZURE_WEBAPP_NAME: lfarci-dev-recipes-api
-  DOTNET_VERSION: '8'
+  DOTNET_VERSION: '8.0.x'
   RECIPES_API_CSPROJ: 'src/Recipes.Api/Recipes.Api.csproj'
 
 on:
