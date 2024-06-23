@@ -16,7 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services
-    .AddDbContext<UserDbContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:Recipes.Database"]));
+    .AddDbContext<UserDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Recipes.Database")));
 
 var app = builder.Build();
 
