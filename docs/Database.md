@@ -1,0 +1,2 @@
+## Database
+How to setup a database connection to a SQL Server instance on Azure: https://learn.microsoft.com/en-gb/azure/azure-sql/database/azure-sql-dotnet-entity-framework-core-quickstart?view=azuresql&tabs=visual-studio%2Cazure-portal%2Cportal.
