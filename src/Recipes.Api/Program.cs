@@ -15,7 +15,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var connectionStringName = "Recipes.Database";
+var connectionStringName = "RecipesDatabase";
 var connectionString = builder.Configuration.GetConnectionString(connectionStringName) ??
                        Environment.GetEnvironmentVariable($"SQLCONNSTR_{connectionStringName}");
 
