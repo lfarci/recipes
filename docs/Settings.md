@@ -22,7 +22,7 @@ During development secrets are stored using the [Secret Manager](https://learn.m
 
 ```
 dotnet user-secrets init
-dotnet user-secrets set "ConnectionStrings:Recipes.Database"
+dotnet user-secrets set "ConnectionStrings:RecipesDatabase"
 dotnet user-secrets set "AzureAd:Domain" "{tenantName}.onmicrosoft.com"
 dotnet user-secrets set "AzureAd:TenantId" "{tenantId}"
 dotnet user-secrets set "AzureAd:ClientId" "{ClientId}"
