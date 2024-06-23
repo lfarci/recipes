@@ -15,8 +15,12 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var connectionStringName = "Recipes.Database";
+var connectionString = builder.Configuration.GetConnectionString(connectionStringName) ??
+                       Environment.GetEnvironmentVariable($"SQLCONNSTR_{connectionStringName}");
+
 builder.Services
-    .AddDbContext<UserDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Recipes.Database")));
+    .AddDbContext<UserDbContext>(options => options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 

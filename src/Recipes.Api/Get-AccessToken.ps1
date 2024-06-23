@@ -60,4 +60,8 @@ $requestBodyString = ($requestBody.GetEnumerator() | ForEach-Object { "$($_.Key)
 
 $response = Invoke-RestMethod -Method POST -Uri $tokenUrl -ContentType "application/x-www-form-urlencoded" -Body $requestBodyString
 
-Write-Host "Access Token: $access_token";
+Write-Host "Response: $response";
+
+$accessToken = $response.access_token;
+
+Write-Host "Access Token: $accessToken";
