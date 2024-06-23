@@ -483,8 +483,5 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
-# Avoid any unwanted token leakage
-/src/**/*.http
-
 src/**/bin
 src/**/obj

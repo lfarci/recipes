@@ -1,0 +1,15 @@
+POST {{HostAddress}}/users
+Content-Type: application/json
+Authorization: Bearer {{Token}}
+
+{
+  "FirstName": "John",
+  "LastName": "Doe"
+}
+
+###
+
+GET {{HostAddress}}/users/{userId}
+Authorization: Bearer {{Token}}
+
+###
