@@ -7,6 +7,8 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Recipes.Database", "src\Rec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Recipes.Api", "src\Recipes.Api\Recipes.Api.csproj", "{D74A78F2-1549-4A71-A022-BEFBE55124D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recipes.Web", "src\Recipes.Web\Recipes.Web.csproj", "{B3D8CB0F-D82D-4EFC-B426-B9D4CF56B2A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{D74A78F2-1549-4A71-A022-BEFBE55124D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D74A78F2-1549-4A71-A022-BEFBE55124D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D74A78F2-1549-4A71-A022-BEFBE55124D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3D8CB0F-D82D-4EFC-B426-B9D4CF56B2A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3D8CB0F-D82D-4EFC-B426-B9D4CF56B2A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3D8CB0F-D82D-4EFC-B426-B9D4CF56B2A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3D8CB0F-D82D-4EFC-B426-B9D4CF56B2A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
