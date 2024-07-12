@@ -13,6 +13,16 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddMsalAuthentication(options =>
 {
     builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
+    options.ProviderOptions.LoginMode = "redirect";
+
+    var scopesSection = builder.Configuration.GetSection("AzureAd:DefaultAccessTokenScopes");
+    var scopes = scopesSection.Get<string[]>();
+
+    if (scopesSection.Exists() && scopes != null)
+    {
+        options.ProviderOptions.DefaultAccessTokenScopes = scopes;
+    }
 });
 
 await builder.Build().RunAsync();
+
