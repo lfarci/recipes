@@ -27,7 +27,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Set up dependency caching for faster builds
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
@@ -41,7 +41,7 @@ jobs:
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp ${{ env.RECIPES_API_CSPROJ }}
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
@@ -57,11 +57,9 @@ jobs:
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: .net-app
-
-      - run: ls
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
