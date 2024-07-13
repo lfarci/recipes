@@ -38,7 +38,7 @@ jobs:
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp ${{ env.RECIPES_APP_CSPROJ }}
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: blazor-wasm-app
           path: ${{env.DOTNET_ROOT}}/myapp
@@ -52,12 +52,16 @@ jobs:
       name: 'Development'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
-    steps:   
+    steps:
+      - name: Create directory for artifact
+        run: mkdir -p ${{ github.workspace }}/public
+  
       - name: Download artifact from build job
         id: download-blazor-wasm-app
         uses: actions/download-artifact@v4
         with:
           name: blazor-wasm-app
+          path: ${{ github.workspace }}/public
 
       - name: Deploy to Azure Static Web App
         id: deploy-to-static-webapp
