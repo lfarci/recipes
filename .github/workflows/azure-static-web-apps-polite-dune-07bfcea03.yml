@@ -2,7 +2,6 @@ name: Build and deploy Recipes.Web
 
 env:
   AZURE_STATIC_WEBAPP_NAME: lfarci-test-static
-  AZURE_WEBAPP_PACKAGE_PATH: '.' 
   DOTNET_VERSION: '8.0.x'
   RECIPES_APP_CSPROJ: 'src/Recipes.Web/Recipes.Web.csproj'
 
@@ -36,6 +35,9 @@ jobs:
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp ${{ env.RECIPES_APP_CSPROJ }}
+
+      - name: Move Azure Static Webapp configuration
+        run: mv 'src/Recipes.Web/staticwebapp.config.json' ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
