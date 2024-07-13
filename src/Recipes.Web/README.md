@@ -13,3 +13,6 @@ Secrets should be encoded in a local development appsettings.json file. This fil
   }
 }
 ```
+
+# Deployment
+[Deploy a Blazor app on Azure Static Web Apps](https://learn.microsoft.com/en-us/azure/static-web-apps/deploy-blazor)
