@@ -50,16 +50,12 @@ jobs:
       name: 'Development'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
-    steps:
-      - name: Create directory for artifact
-        run: mkdir -p ${{ github.workspace }}/public
-    
+    steps:   
       - name: Download artifact from build job
         id: download-blazor-wasm-app
         uses: actions/download-artifact@v4
         with:
           name: blazor-wasm-app
-          path: ${{ github.workspace }}/public
 
       - name: Deploy to Azure Static Web App
         id: deploy-to-static-webapp
