@@ -52,6 +52,7 @@ jobs:
 
     steps:
       - name: Download artifact from build job
+        id: download-blazor-wasm-app
         uses: actions/download-artifact@v4
         with:
           name: blazor-wasm-app
@@ -64,7 +65,7 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_DUNE_07BFCEA03 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: ${{ github.workspace }}/public
+          app_location: ${{ steps.download-blazor-wasm-app.download-path }}
           output_location: ""
           skip_app_build: true
           skip_api_build: true
