@@ -1,0 +1,2 @@
+﻿GET {{HostAddress}}/users/{userId}/recipes
+Authorization: Bearer {{Token}}

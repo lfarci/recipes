@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Recipes.Api.Recipes;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Recipes.Api.User
 {
@@ -9,5 +10,7 @@ namespace Recipes.Api.User
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+
+        public virtual ICollection<RecipeEntity> Recipes { get; set; } = [];
     }
 }

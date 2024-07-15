@@ -1,5 +1,4 @@
 ﻿using Microsoft.Identity.Web.Resource;
-using Recipes.Api.Users;
 using System.Security.Claims;
 
 namespace Recipes.Api.User
@@ -12,7 +11,7 @@ namespace Recipes.Api.User
             app.MapPost("/users", CreateUser).WithName("CreateUser").WithOpenApi().RequireAuthorization();
         }
 
-        private static async Task<IResult> GetUser(HttpContext httpContext, long userId, UserDbContext dbContext)
+        private static async Task<IResult> GetUser(HttpContext httpContext, long userId, RecipesDbContext dbContext)
         {
             httpContext.VerifyUserHasAnyAcceptedScope("Recipes.User.Read");
 
@@ -26,7 +25,7 @@ namespace Recipes.Api.User
             return Results.Ok(new { entity.FirstName, entity.LastName, entity.Email });
         }
 
-        private static async Task<IResult> CreateUser(HttpContext httpContext, UserRequest user, UserDbContext dbContext)
+        private static async Task<IResult> CreateUser(HttpContext httpContext, UserRequest user, RecipesDbContext dbContext)
         {
             httpContext.VerifyUserHasAnyAcceptedScope("Recipes.User.Write");
 

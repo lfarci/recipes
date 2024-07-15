@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
+using Recipes.Api;
+using Recipes.Api.Recipes;
 using Recipes.Api.User;
-using Recipes.Api.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +21,7 @@ var connectionString = builder.Configuration.GetConnectionString(connectionStrin
                        Environment.GetEnvironmentVariable($"SQLCONNSTR_{connectionStringName}");
 
 builder.Services
-    .AddDbContext<UserDbContext>(options => options.UseSqlServer(connectionString));
+    .AddDbContext<RecipesDbContext>(options => options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 
@@ -36,5 +37,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapUserEndpoints();
+app.MapRecipeEndpoints();
 
 app.Run();
