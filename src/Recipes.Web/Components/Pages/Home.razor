@@ -1,8 +1,90 @@
 ﻿@page "/"
-@inject HttpClient httpClient
+@attribute [Authorize]
+
+@using System.Text.Json
+@using System.Security.Claims
+@using Recipes.Web.Models
+@using System.Net.Http.Headers
+
+@inject IAccessTokenProvider AuthorizationService
+@inject IConfiguration Config
+@inject HttpClient Http
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Recipes</h1>
 
-Welcome to your new app.
+@if (loading)
+{
+    <p>Loading...</p>
+}
+else
+{
+    @if (recipes.Any())
+    {
+        <p>Here are some recipes:</p>
+
+        @foreach (var recipe in recipes)
+        {
+            <div>
+                <h3>@recipe.Name</h3>
+                <p>@recipe.Description</p>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No recipes found.</p>
+    }
+}
+
+@code {
+    private string? recipesApiUrl;
+    private IEnumerable<Recipe> recipes = new List<Recipe>();
+    private bool loading = true;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationState { get; set; } = null!;
+    public AccessToken AccessToken { get; set; } = null!;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var state = await AuthenticationState;
+        var accessTokenResult = await AuthorizationService.RequestAccessToken();
+
+        if (!accessTokenResult.TryGetToken(out var token))
+        {
+            throw new InvalidOperationException("Failed to provision the access token.");
+        }
+
+        AccessToken = token;
+
+        recipesApiUrl = $"{Config["RecipesApiAddress"]}/recipes";
+        recipes = await GetRecipes();
+        loading = false;
+    }
+
+    private async Task<IEnumerable<Recipe>> GetRecipes()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, recipesApiUrl);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken.Value);
+
+        var response = await Http.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            var recipes = JsonSerializer.Deserialize<IEnumerable<Recipe>>(content);
+
+            return recipes ?? new List<Recipe>();
+        }
+        else
+        {
+            // Handle error response
+            return new List<Recipe>();
+        }
+    }
+}

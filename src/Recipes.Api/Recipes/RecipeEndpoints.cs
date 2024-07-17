@@ -8,10 +8,10 @@ namespace Recipes.Api.Recipes
     {
         public static void MapRecipeEndpoints(this IEndpointRouteBuilder app)
         {
-            app.MapGet("/users/{userId}/recipes", GetRecipes).WithName("GetRecipes").WithOpenApi().RequireAuthorization();
+            app.MapGet("/recipes", GetRecipes).WithName("GetRecipes").WithOpenApi().RequireAuthorization();
         }
 
-        private static async Task<IResult> GetRecipes(HttpContext http, RecipesDbContext db, long userId)
+        private static async Task<IResult> GetRecipes(HttpContext http, RecipesDbContext db)
         {
             http.VerifyUserHasAnyAcceptedScope("Recipes.User.Read");
 
@@ -30,13 +30,8 @@ namespace Recipes.Api.Recipes
                 return Results.NotFound();
             }
 
-            if (user.Id != userId)
-            {
-                return Results.Forbid();
-            }
-
             var recipes = db.Recipes
-                .Where(r => r.OwnerId == userId)
+                .Where(r => r.OwnerId == user.Id)
                 .Select(r => new
                 {
                     r.Id,

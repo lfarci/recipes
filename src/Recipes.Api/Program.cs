@@ -15,6 +15,7 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddCors();
 
 var connectionStringName = "RecipesDatabase";
 var connectionString = builder.Configuration.GetConnectionString(connectionStringName) ??
@@ -36,6 +37,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()); // Configure CORS to accept all clients
+
 app.MapUserEndpoints();
 app.MapRecipeEndpoints();
 
