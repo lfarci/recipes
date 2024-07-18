@@ -17,23 +17,25 @@ namespace Recipes.Api.Recipes
 
             logger.LogInformation("Accepted scope has been validated.");
 
-            var emailClaim = http?.User?.FindFirst(ClaimTypes.Email);
-            if (emailClaim == null)
+            var nameIdentifierClaim = http?.User?.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (nameIdentifierClaim == null)
             {
-                logger.LogError("Could not resolve email claim from the access token.");
-                return Results.BadRequest("Email not found.");
+                logger.LogError("Could not resolve name identifier claim from the access token.");
+                return Results.BadRequest("Name identifier not found.");
             }
 
-            var email = emailClaim.Value;
+            var nameIdentifier = nameIdentifierClaim.Value;
 
-            var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Id == nameIdentifier);
 
             if (user == null)
             {
+                logger.LogError("Could not resolve user with {Id}.", nameIdentifier);
                 return Results.NotFound();
             }
 
-            logger.LogInformation("User {Email} (Id: {Id}) is requesting all recipes.", user.Email, user.Id);
+            logger.LogInformation("User with id {Id} is requesting all recipes.", user.Id);
 
             var recipes = db.Recipes
                 .Where(r => r.OwnerId == user.Id)
@@ -45,7 +47,7 @@ namespace Recipes.Api.Recipes
                 })
                 .ToList();
 
-            logger.LogInformation("{Amount} recipes found for user {Email} (Id: {Id}).", recipes.Count, user.Email, user.Id);
+            logger.LogInformation("{Amount} recipes found for user with {Id}.", recipes.Count, user.Id);
 
 
             return Results.Ok(recipes);

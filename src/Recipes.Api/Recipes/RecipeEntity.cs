@@ -8,7 +8,7 @@ namespace Recipes.Api.Recipes
     {
         public long Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public long OwnerId { get; set; }
+        public string OwnerId { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
 
         public virtual UserEntity Owner { get; set; } = null!;
