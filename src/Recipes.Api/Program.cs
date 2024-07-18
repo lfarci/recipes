@@ -17,6 +17,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
 
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddConsole();
+    loggingBuilder.AddAzureWebAppDiagnostics();
+});
+
 var connectionStringName = "RecipesDatabase";
 var connectionString = builder.Configuration.GetConnectionString(connectionStringName) ??
                        Environment.GetEnvironmentVariable($"SQLCONNSTR_{connectionStringName}");
