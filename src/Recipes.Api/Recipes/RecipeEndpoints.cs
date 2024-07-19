@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Web.Resource;
-using System.Security.Claims;
+﻿using Recipes.Api.User;
 
 namespace Recipes.Api.Recipes
 {
@@ -11,46 +9,16 @@ namespace Recipes.Api.Recipes
             app.MapGet("/recipes", GetRecipes).WithName("GetRecipes").WithOpenApi().RequireAuthorization();
         }
 
-        private static async Task<IResult> GetRecipes(HttpContext http, RecipesDbContext db, ILogger<Program> logger)
+        private static async Task<IResult> GetRecipes(IUserService users, IRecipeService recipes)
         {
-            http.VerifyUserHasAnyAcceptedScope("Recipes.User.Read");
-
-            logger.LogInformation("Accepted scope has been validated.");
-
-            var nameIdentifierClaim = http?.User?.FindFirst(ClaimTypes.NameIdentifier);
-
-            if (nameIdentifierClaim == null)
-            {
-                logger.LogError("Could not resolve name identifier claim from the access token.");
-                return Results.BadRequest("Name identifier not found.");
-            }
-
-            var nameIdentifier = nameIdentifierClaim.Value;
-
-            var user = await db.Users.FirstOrDefaultAsync(u => u.Id == nameIdentifier);
+            var user = await users.GetAuthenticatedUser();
 
             if (user == null)
             {
-                logger.LogError("Could not resolve user with {Id}.", nameIdentifier);
                 return Results.NotFound();
             }
 
-            logger.LogInformation("User with id {Id} is requesting all recipes.", user.Id);
-
-            var recipes = db.Recipes
-                .Where(r => r.OwnerId == user.Id)
-                .Select(r => new
-                {
-                    r.Id,
-                    r.Name,
-                    r.Description
-                })
-                .ToList();
-
-            logger.LogInformation("{Amount} recipes found for user with {Id}.", recipes.Count, user.Id);
-
-
-            return Results.Ok(recipes);
+            return Results.Ok(await recipes.GetRecipes(user.Id));
         }
     }
 }

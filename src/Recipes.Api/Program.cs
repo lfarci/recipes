@@ -30,6 +30,10 @@ var connectionString = builder.Configuration.GetConnectionString(connectionStrin
 builder.Services
     .AddDbContext<RecipesDbContext>(options => options.UseSqlServer(connectionString));
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IRecipeService, RecipeService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 var app = builder.Build();
 
 app.UseAuthentication();
