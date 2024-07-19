@@ -24,13 +24,19 @@ else
     {
         <p>Here are some recipes:</p>
 
-        @foreach (var recipe in recipes)
-        {
-            <div>
-                <h3>@recipe.Name</h3>
-                <p>@recipe.Description</p>
-            </div>
-        }
+        <div class="card-container">
+            @foreach (var recipe in recipes)
+            {
+                <div class="card" style="width: fit-content;">
+                    <div class="card-header">
+                        <h3>@recipe.Name</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>@recipe.Description</p>
+                    </div>
+                </div>
+            }
+        </div>
     }
     else
     {
@@ -46,8 +52,6 @@ else
     [CascadingParameter]
     private Task<AuthenticationState> AuthenticationState { get; set; } = null!;
     public AccessToken AccessToken { get; set; } = null!;
-
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -88,3 +92,14 @@ else
         }
     }
 }
+
+<style>
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .card {
+        margin: 10px;
+    }
+</style>
