@@ -8,30 +8,7 @@ The Web API is configured to use [Microsoft Identity Platform](https://learn.mic
 
 
 ## Get an access token during development
-```
-// Get authorization code, use this in the browser. After signing in you should get redirected to
-// {redirectUri}/code={authorizationCode}
-
-GET https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/authorize?
-    client_id={clientId}
-    &response_type=code
-    &redirect_uri={redirectUri}
-    &response_mode=query
-    &scope=api://{clientId}/{scopeName}
-
-// Request an access token using the authorization code.
-
-POST https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token HTTP/1.1
-Content-Type: application/x-www-form-urlencoded
-
-client_id={clientId}
-&scope=api://{clientId}/{scope}
-&code={authorizationCode}
-&session_state={clientId}
-&redirect_uri={redirectUri}
-&grant_type=authorization_code
-&client_secret={clientSecret}
-```
+A PowerShell script has been created (`src/Recipes.Api/Get-AccessToken.ps1`). It can be used when working on the backend service independently.
 
 ## Scopes
 | Name               | Method | Endpoints    | Description                          |
