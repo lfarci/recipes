@@ -8,7 +8,11 @@ env:
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - master
+    paths:
+      - 'src/Recipes.Api/**'
+
   workflow_dispatch:
 
 permissions:
