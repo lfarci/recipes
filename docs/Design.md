@@ -8,3 +8,6 @@ The idea would be to implement Microsoft's design system by relying on the `flue
 
 - [`microsoft/fluentui-blazor`](https://github.com/microsoft/fluentui-blazor)
 - [Documentation](https://www.fluentui-blazor.net/)
+
+# Code setup
+I have followed the Fluent UI team's [guide](https://www.fluentui-blazor.net/CodeSetup) to setup the library components.
