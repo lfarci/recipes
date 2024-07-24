@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.FluentUI.AspNetCore.Components;
 using Recipes.Web.Components;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 var baseAddress = builder.Configuration["BaseAddress"] ?? "https://localhost:3000";
+
+builder.Services.AddFluentUIComponents();
 
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
