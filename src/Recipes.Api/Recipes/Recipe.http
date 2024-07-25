@@ -1,2 +1,33 @@
-﻿GET {{HostAddress}}/users/{userId}/recipes
+﻿GET {{HostAddress}}/recipes?page=1&size=10
+Authorization: Bearer {{Token}}
+
+###
+
+GET {{HostAddress}}/recipes/19
+Authorization: Bearer {{Token}}
+
+###
+POST {{HostAddress}}/recipes
+Content-Type: application/json
+Authorization: Bearer {{Token}}
+
+{
+  "name": "Culurgiones",
+  "description": "Culurgiones are a typical Sardinian pasta, similar to ravioli, stuffed with potatoes, pecorino cheese, garlic, mint and pepper."
+}
+
+###
+
+PUT {{HostAddress}}/recipes/19
+Content-Type: application/json
+Authorization: Bearer {{Token}}
+
+{
+  "name": "Culurgiones",
+  "description": "Culurgiones are a typical Sardinian pasta, similar to ravioli, stuffed with potatoes, pecorino cheese, garlic, mint and pepper. They are delicious."
+}
+
+###
+
+DELETE {{HostAddress}}/recipes/19
 Authorization: Bearer {{Token}}
