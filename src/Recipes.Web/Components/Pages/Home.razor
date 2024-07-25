@@ -3,6 +3,7 @@
 
 @using System.Text.Json
 @using System.Security.Claims
+@using Microsoft.FluentUI.AspNetCore.Components
 @using Recipes.Web.Models
 @using System.Net.Http.Headers
 
@@ -10,9 +11,7 @@
 @inject IConfiguration Config
 @inject HttpClient Http
 
-<PageTitle>Home</PageTitle>
-
-<h1>Recipes</h1>
+<PageTitle>Recipes</PageTitle>
 
 @if (loading)
 {
@@ -22,21 +21,15 @@ else
 {
     @if (recipes.Any())
     {
-        <p>Here are some recipes:</p>
-
-        <div class="card-container">
+        <FluentStack Orientation="Orientation.Vertical">
             @foreach (var recipe in recipes)
             {
-                <div class="card" style="width: fit-content;">
-                    <div class="card-header">
-                        <h3>@recipe.Name</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>@recipe.Description</p>
-                    </div>
-                </div>
+                <FluentCard>
+                    <p>@recipe.Name</p>
+                    <p>@recipe.Description</p>
+                </FluentCard>
             }
-        </div>
+        </FluentStack>
     }
     else
     {
