@@ -1,4 +1,4 @@
-﻿using Recipes.Api.User;
+﻿using Recipes.Api.Users;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Recipes.Api.Recipes

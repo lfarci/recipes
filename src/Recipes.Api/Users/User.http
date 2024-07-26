@@ -9,7 +9,10 @@ Authorization: Bearer {{Token}}
 
 ###
 
-GET {{HostAddress}}/users/{userId}
+GET {{HostAddress}}/user/details
 Authorization: Bearer {{Token}}
 
 ###
+
+GET {{HostAddress}}/user/photo
+Authorization: Bearer {{Token}}

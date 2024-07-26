@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Recipes.Api;
 using Recipes.Api.Recipes;
-using Recipes.Api.User;
+using Recipes.Api.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +36,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
-app.UseAuthentication();
+//app.UseAuthentication();
 app.UseAuthorization();
 
 // Configure the HTTP request pipeline.

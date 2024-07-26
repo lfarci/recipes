@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Recipes.Api.Recipes;
-using Recipes.Api.User;
+using Recipes.Api.Users;
 
 namespace Recipes.Api
 {

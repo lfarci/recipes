@@ -1,7 +1,7 @@
 ﻿using Recipes.Api.Recipes;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Recipes.Api.User
+namespace Recipes.Api.Users
 {
     [Table("User")]
     public class UserEntity

@@ -1,7 +1,34 @@
 ﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.FluentUI.AspNetCore.Components
 @inject NavigationManager Navigation
 
+
 <AuthorizeView>
+    <Authorized>
+        <FluentStack HorizontalAlignment="@HorizontalAlignment.End" VerticalAlignment="@VerticalAlignment.Center" Style="height: 48px; background: var(--neutral-layer-4); padding-inline-end: 10px; ">
+            <FluentProfileMenu Initials="LF" Style="--fluent-profile-menu-hover: var(--neutral-stroke-focus); padding: 4px;">
+                <HeaderTemplate>
+                    <FluentLabel Typo="@Typography.Header">Login</FluentLabel>
+                </HeaderTemplate>
+                <ChildContent>
+                    <div style="width: 250px; height: 80px">
+                        <FluentLabel Typo="@Typography.Header" Style="font-weight: bold;">@context.User.Identity?.Name</FluentLabel>
+                    </div>
+                </ChildContent>
+                <FooterTemplate>
+                    <FluentStack>
+                        <FluentSpacer />
+                        <FluentAnchor Appearance="@Appearance.Hypertext"
+                                      Href="https://microsoft.com"
+                                      Target="_blank">About</FluentAnchor>
+                    </FluentStack>
+                </FooterTemplate>
+            </FluentProfileMenu>
+        </FluentStack>
+    </Authorized>
+</AuthorizeView>
+
+@* <AuthorizeView>
     <Authorized>
         Hello, @context.User.Identity?.Name!
         <button class="nav-link btn btn-link" @onclick="BeginLogOut">Log out</button>
@@ -9,7 +36,7 @@
     <NotAuthorized>
         <a href="authentication/login">Log in</a>
     </NotAuthorized>
-</AuthorizeView>
+</AuthorizeView> *@
 
 @code{
     public void BeginLogOut()

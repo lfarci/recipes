@@ -1,4 +1,4 @@
-﻿using Recipes.Api.User;
+﻿using Recipes.Api.Users;
 
 namespace Recipes.Api.Recipes
 {

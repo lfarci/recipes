@@ -1,4 +1,4 @@
-﻿namespace Recipes.Api.User
+﻿namespace Recipes.Api.Users
 {
     public class UserRequest
     {
