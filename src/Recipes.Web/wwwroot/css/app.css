@@ -17,7 +17,7 @@ a, .btn-link {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 .content {
@@ -114,3 +114,36 @@ body {
     color: var(--neutral-foreground-rest);
     background: var(--neutral-fill-layer-rest);
 }
+
+.page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    max-height: 100vh;
+}
+
+.page-header {
+    width: 100%;
+}
+
+.page-content {
+    flex-grow: 10;
+}
+
+.page-footer {
+    width: 100%;
+    height: 5%;
+    min-height: 50px;
+    background-color: var(--accent-fill-rest);
+    color: var(--fill-color);
+    font-family: var(--body-font);
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+    .page-footer p {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0;
+    }

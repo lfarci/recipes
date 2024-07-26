@@ -2,20 +2,21 @@
 @inherits LayoutComponentBase
 
 <FluentDesignTheme Mode="DesignThemeModes.Light" StorageName="theme" />
-<div class="page">
-    <FluentHeader>
+<FluentStack Class="page" Orientation="Orientation.Vertical" VerticalGap="0">
+    <FluentHeader Class="page-header">
         Recipes
         <FluentSpacer />
         <LoginDisplay />
     </FluentHeader>
-    <FluentBodyContent>
+    <FluentBodyContent Class="page-content">
         @Body
     </FluentBodyContent>
-    <FluentFooter>
+    <FluentFooter Class="page-footer">
+        <p>Version 0.0.1</p>
         <FluentSpacer />
         <p>Logan Farci &copy 2024. All rights reserved.</p>
     </FluentFooter>
-</div>
+</FluentStack>
 <FluentToastProvider />
 <FluentDialogProvider />
 <FluentTooltipProvider />
