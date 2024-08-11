@@ -26,4 +26,5 @@ dotnet user-secrets set "ConnectionStrings:RecipesDatabase"
 dotnet user-secrets set "AzureAd:Domain" "{tenantName}.onmicrosoft.com"
 dotnet user-secrets set "AzureAd:TenantId" "{tenantId}"
 dotnet user-secrets set "AzureAd:ClientId" "{ClientId}"
+dotnet user-secrets set "Api:ClientSecret" "{ClientSecret}"
 ```
