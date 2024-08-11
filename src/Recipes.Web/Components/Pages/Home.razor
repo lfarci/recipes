@@ -1,28 +1,23 @@
 ﻿@page "/"
 @attribute [Authorize]
 
-@using System.Text.Json
-@using System.Security.Claims
 @using Microsoft.FluentUI.AspNetCore.Components
-@using Recipes.Web.Models
-@using System.Net.Http.Headers
 
-@inject IAccessTokenProvider AuthorizationService
-@inject IConfiguration Config
-@inject HttpClient Http
+@inject IUserService UserService
+@inject IRecipesService RecipeService
 
 <PageTitle>Recipes</PageTitle>
 
-@if (loading)
+@if (Loading)
 {
     <p>Loading...</p>
 }
 else
 {
-    @if (recipes.Any())
+    @if (RecipesCollection.Any())
     {
         <FluentStack Orientation="Orientation.Vertical">
-            @foreach (var recipe in recipes)
+            @foreach (var recipe in RecipesCollection)
             {
                 <FluentCard>
                     <p>@recipe.Name</p>
@@ -38,51 +33,15 @@ else
 }
 
 @code {
-    private string? recipesApiUrl;
-    private IEnumerable<Recipe> recipes = new List<Recipe>();
-    private bool loading = true;
-
-    [CascadingParameter]
-    private Task<AuthenticationState> AuthenticationState { get; set; } = null!;
-    public AccessToken AccessToken { get; set; } = null!;
+    public IEnumerable<RecipeResponse> RecipesCollection = new List<RecipeResponse>();
+    public UserResponse? User = null;
+    public bool Loading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
-        var state = await AuthenticationState;
-        var accessTokenResult = await AuthorizationService.RequestAccessToken();
-
-        if (!accessTokenResult.TryGetToken(out var token))
-        {
-            throw new InvalidOperationException("Failed to provision the access token.");
-        }
-
-        AccessToken = token;
-
-        recipesApiUrl = $"{Config["RecipesApiAddress"]}/recipes?page=1&size=1000";
-        recipes = await GetRecipes();
-        loading = false;
-    }
-
-    private async Task<IEnumerable<Recipe>> GetRecipes()
-    {
-        var request = new HttpRequestMessage(HttpMethod.Get, recipesApiUrl);
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken.Value);
-
-        var response = await Http.SendAsync(request);
-
-        if (response.IsSuccessStatusCode)
-        {
-            var content = await response.Content.ReadAsStringAsync();
-            var recipes = JsonSerializer.Deserialize<IEnumerable<Recipe>>(content);
-
-            return recipes ?? new List<Recipe>();
-        }
-        else
-        {
-            // Handle error response
-            return new List<Recipe>();
-        }
+        User = await UserService.GetUser();
+        RecipesCollection = await RecipeService.GetRecipes();
+        Loading = false;
     }
 }
 

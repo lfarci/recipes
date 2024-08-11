@@ -23,4 +23,11 @@ The guide [Secure an ASP.NET Core Blazor WebAssembly standalone app with Microso
 A PowerShell script has been created (`src/Recipes.Api/Get-AccessToken.ps1`). It can be used when working on the backend service independently.
 
 
-
+# Microsoft Graph
+## Configure API permissions
+Define the permissions (scopes) your application requires in the Azure portal:
+1.	Go to the directoy in the Azure portal.
+2.	Select App registrations and choose your application.
+3.	Navigate to API permissions.
+4.	Click Add a permission, select Microsoft Graph, and then choose the type of permissions your application needs (Delegated or Application permissions).
+5.	Add the necessary permissions (e.g., User.Read, User.ReadBasic.All) and grant admin consent if necessary.

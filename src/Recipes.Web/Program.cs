@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
+using Recipes.Web;
 using Recipes.Web.Components;
+using Recipes.Web.Users;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 var baseAddress = builder.Configuration["BaseAddress"] ?? "https://localhost:3000";
@@ -14,6 +16,9 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Configuration.AddUserSecrets<Program>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseAddress) });
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRecipesService, RecipeService>();
+
 
 builder.Services.AddMsalAuthentication(options =>
 {
