@@ -42,14 +42,14 @@ namespace Recipes.Web
             return value;
         }
 
-        public async Task<ApiResponse<T>> Get<T>(string path)
+        public async Task<ApiResponse<T>> Get<T>(string path, Func<HttpContent, Task<T?>> read)
         {
             HttpResponseMessage response = await Get(path);
             T? result = default;
 
             if (response.IsSuccessStatusCode)
             {
-                result = await ReadContent<T>(response);
+                result = await read(response.Content);
             }
 
             return new ApiResponse<T>()
@@ -60,9 +60,24 @@ namespace Recipes.Web
             };
         }
 
+        public async Task<ApiResponse<T>> Get<T>(string path)
+        {
+            return await Get<T>(path, ReadJsonContent<T>);
+        }
+
+        public async Task<ApiResponse<string>> GetAsBase64(string path) => await Get(path, ReadBase64Content);
+
         private async Task<HttpResponseMessage> Get(string path) => await _http.SendAsync(await BuildHttpRequestMessage(HttpMethod.Get, path));
 
-        private static async Task<T?> ReadContent<T>(HttpResponseMessage response) => JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync());
+        private static async Task<T?> ReadJsonContent<T>(HttpContent content) => JsonSerializer.Deserialize<T>(await content.ReadAsStringAsync());
+
+        private static async Task<string?> ReadBase64Content(HttpContent content)
+        {
+            using var stream = await content.ReadAsStreamAsync();
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            return Convert.ToBase64String(memoryStream.ToArray());
+        }
 
         private string BuildRequestUri(string path)
         {

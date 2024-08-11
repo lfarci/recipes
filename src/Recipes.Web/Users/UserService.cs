@@ -5,33 +5,49 @@ namespace Recipes.Web.Users
 
     internal class UserService : WebApiService, IUserService
     {
-        private UserResponse? _user = default;
+        private UserState? _state = default;
 
-        public UserResponse? Current => _user;
+        public UserState? Current => _state;
 
-        public event Action? OnChange;
+        public event Action OnStateChange = () => { };
 
         public UserService(IAccessTokenProvider authorizationService, IConfiguration config, HttpClient http)
             : base(authorizationService, config, http)
         {
         }
 
-        public async Task<UserResponse?> GetUser()
+        public async Task LoadUserDetails()
         {
-            var response = await Get<UserResponse>("user");
-            UserResponse? user = default;
+            var detailsResponse = await Get<UserResponse>("user");
+            var photoResponse = await GetAsBase64("user/photo");
 
-            if (response.Success)
+            UserResponse? user = default;
+            string? photo = string.Empty;
+
+            if (detailsResponse.Success)
             {
-                user = response.Value;
+                user = detailsResponse.Value;
             }
 
-            _user = user;
-            NotifyStateChanged();
+            if (photoResponse.Success)
+            {
+                photo = photoResponse.Value;
+            }
 
-            return user;
+            _state = new UserState()
+            {
+                FirstName = user?.FirstName ?? string.Empty,
+                LastName = user?.LastName ?? string.Empty,
+                UserName = user?.UserName ?? string.Empty,
+                Photo = photo
+            };
+
+            NotifyStateChanged();
         }
 
-        public void NotifyStateChanged() => OnChange?.Invoke();
+        private void NotifyStateChanged()
+        {
+            OnStateChange?.Invoke();
+        }
     }
 }

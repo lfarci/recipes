@@ -34,12 +34,11 @@ else
 
 @code {
     public IEnumerable<RecipeResponse> RecipesCollection = new List<RecipeResponse>();
-    public UserResponse? User = null;
     public bool Loading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        User = await UserService.GetUser();
+        await UserService.LoadUserDetails();
         RecipesCollection = await RecipeService.GetRecipes();
         Loading = false;
     }

@@ -2,9 +2,9 @@
 {
     public interface IUserService
     {
-        public UserResponse? Current { get; }
-        public event Action? OnChange;
+        public UserState? Current { get; }
+        public event Action OnStateChange;
 
-        Task<UserResponse?> GetUser();
+        Task LoadUserDetails();
     }
 }

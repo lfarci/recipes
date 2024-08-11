@@ -36,45 +36,5 @@ namespace Recipes.Web.Users
             LastName = lastName;
             UserName = userName;
         }
-
-        [JsonIgnore]
-        public string DisplayName
-        {
-            get
-            {
-                if (!string.IsNullOrWhiteSpace(FirstName) && !string.IsNullOrWhiteSpace(LastName))
-                {
-                    return $"{FirstName} {LastName}";
-                }
-
-                return UserName ?? string.Empty;
-            }
-        }
-
-        [JsonIgnore]
-        public string Initials
-        {
-            get
-            {
-                var initials = new StringBuilder();
-
-                if (!string.IsNullOrWhiteSpace(FirstName))
-                {
-                    initials.Append(FirstName[0]);
-                }
-
-                if (!string.IsNullOrWhiteSpace(LastName))
-                {
-                    initials.Append(LastName[0]);
-                }
-
-                if (initials.Length == 0)
-                {
-                    initials.Append("X");
-                }
-
-                return initials.ToString();
-            }
-        }
     }
 }
