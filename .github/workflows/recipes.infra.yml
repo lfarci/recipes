@@ -2,6 +2,7 @@ name: Deploy Azure resources
 
 env:
   RESOURCE_GROUP: 'lfarci-recipes-rg'
+  TEMPLATES_DIRECTORY: './infra'
   LOCATION: 'westeurope'
 
 on:
@@ -31,6 +32,7 @@ jobs:
             --location ${{ env.LOCATION }}
 
       - name: Deploy Azure web app for API
+        working-directory: ${{ env.TEMPLATES_DIRECTORY }}
         run: |
           az deployment group create \
             --resource-group ${{ env.RESOURCE_GROUP }} \
@@ -38,6 +40,7 @@ jobs:
             --parameters api.dev.bicepparam
 
       - name: Deploy Azure static web app for frontend
+        working-directory: ${{ env.TEMPLATES_DIRECTORY }}
         run: |
           az deployment group create \
             --resource-group ${{ env.RESOURCE_GROUP }} \
