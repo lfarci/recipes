@@ -1,4 +1,4 @@
 using 'api.bicep'
 
-param appName = 'lfarci-dev-recipes-api'
+param appName = 'lfarci-recipes-api-dev'
 param sku = 'F1'
