@@ -1,0 +1,45 @@
+name: Deploy Azure resources
+
+env:
+  RESOURCE_GROUP: 'lfarci-recipes-rg'
+  LOCATION: 'westeurope'
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'infra/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Azure CLI
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create resource group
+        run: |
+          az group create \
+            --name ${{ env.RESOURCE_GROUP }} \
+            --location ${{ env.LOCATION }}
+
+      - name: Deploy Azure web app for API
+        run: |
+          az deployment group create \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --template-file api.bicep \
+            --parameters api.dev.bicepparam
+
+      - name: Deploy Azure static web app for frontend
+        run: |
+          az deployment group create \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --template-file web.bicep \
+            --parameters web.dev.bicepparam
