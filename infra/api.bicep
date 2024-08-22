@@ -47,19 +47,19 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
       }
       appSettings: [
         {
-          name: 'AzureAd:ClientId'
+          name: 'AzureAd__ClientId'
           value: entraIdClientId
         }
         {
-          name: 'AzureAd:Domain'
+          name: 'AzureAd__Domain'
           value: entraIdDomain
         }
         {
-          name: 'AzureAd:Instance'
+          name: 'AzureAd__Instance'
           value: entraIdInstance
         }
         {
-          name: 'AzureAd:TenantId'
+          name: 'AzureAd__TenantId'
           value: subscription().tenantId
         }
       ]
