@@ -10,6 +10,9 @@ param entraIdDomain string
 @description('Entra ID instance.')
 param entraIdInstance string
 
+@description('SQL Server instance connection string.')
+param recipesDatabaseConnectionString string
+
 @description('Location for all resources.')
 param location string = resourceGroup().location
 
@@ -61,6 +64,13 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
         {
           name: 'AzureAd__TenantId'
           value: subscription().tenantId
+        }
+      ]
+      connectionStrings: [
+        {
+          name: 'RecipesDatabase'
+          connectionString: recipesDatabaseConnectionString
+          type: 'SQLServer'
         }
       ]
     }
