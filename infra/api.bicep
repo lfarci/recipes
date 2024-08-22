@@ -1,6 +1,15 @@
 @description('Application name. Application service plan is derived from this name.')
 param appName string
 
+@description('Entra ID app registration client ID.')
+param entraIdClientId string
+
+@description('Entra ID tenant domain.')
+param entraIdDomain string
+
+@description('Entra ID instance.')
+param entraIdInstance string
+
 @description('Location for all resources.')
 param location string = resourceGroup().location
 
@@ -36,6 +45,24 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
       cors: {
         allowedOrigins: ['*']
       }
+      appSettings: [
+        {
+          name: 'AzureAd:ClientId'
+          value: entraIdClientId
+        }
+        {
+          name: 'AzureAd:Domain'
+          value: entraIdDomain
+        }
+        {
+          name: 'AzureAd:Instance'
+          value: entraIdInstance
+        }
+        {
+          name: 'AzureAd:TenantId'
+          value: subscription().tenantId
+        }
+      ]
     }
   }
 }

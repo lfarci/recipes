@@ -12,3 +12,5 @@ I added using
 ```bash
 az role assignment create --assignee "<clientId>" --role "Contributor" --scope "/subscriptions/<id>"
 ```
+
+
