@@ -4,6 +4,10 @@ param appName string
 @description('Entra ID app registration client ID.')
 param entraIdClientId string
 
+@secure()
+@description('Entra ID app registration client secret.')
+param entraIdClientSecret string
+
 @description('Entra ID tenant domain.')
 param entraIdDomain string
 
@@ -64,6 +68,10 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
         {
           name: 'AzureAd__TenantId'
           value: subscription().tenantId
+        }
+        {
+          name: 'Api__ClientSecret'
+          value: entraIdClientSecret
         }
       ]
       connectionStrings: [

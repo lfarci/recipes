@@ -14,3 +14,9 @@ az role assignment create --assignee "<clientId>" --role "Contributor" --scope "
 ```
 
 
+## Secrets
+
+| Name                     | Description                                                                                       |
+| ------------------------ | ------------------------------------------------------------------------------------------------- |
+| `ENTRA_ID_CLIENT_SECRET` | Connect to Entra ID and find one of the client secret from the expected application registration. |
+| `AZURE_CREDENTIALS`      | JSON structure as mentioned in the `azure\login` GitHub action documentation.                     |

@@ -34,10 +34,11 @@ jobs:
       - name: Deploy Azure web app for API
         working-directory: ${{ env.TEMPLATES_DIRECTORY }}
         run: |
-          az deployment group create \
+            az deployment group create \
             --resource-group ${{ env.RESOURCE_GROUP }} \
             --template-file api.bicep \
-            --parameters api.dev.bicepparam
+            --parameters api.dev.bicepparam \
+            --parameters entraIdClientSecret=${{ secrets.ENTRA_ID_CLIENT_SECRET }}
 
       - name: Deploy Azure static web app for frontend
         working-directory: ${{ env.TEMPLATES_DIRECTORY }}
