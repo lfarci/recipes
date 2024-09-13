@@ -129,6 +129,7 @@ body {
 
 .page-content {
     flex-grow: 10;
+    padding: 1em;
 }
 
 .page-footer {
