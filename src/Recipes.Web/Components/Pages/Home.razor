@@ -2,45 +2,84 @@
 @attribute [Authorize]
 
 @using Microsoft.FluentUI.AspNetCore.Components
+@using Recipes.Web.Models
 
 @inject IUserService UserService
 @inject IRecipesService RecipeService
+@inject IDialogService DialogService
 
 <PageTitle>Recipes</PageTitle>
 
 @if (Loading)
 {
-    <p>Loading...</p>
+    <p>Loading your recipes...</p>
 }
 else
 {
-    @if (RecipesCollection.Any())
-    {
-        <FluentStack Orientation="Orientation.Vertical">
-            @foreach (var recipe in RecipesCollection)
-            {
-                <FluentCard>
-                    <p>@recipe.Name</p>
-                    <p>@recipe.Description</p>
-                </FluentCard>
-            }
-        </FluentStack>
-    }
-    else
-    {
-        <p>No recipes found.</p>
-    }
+    <FluentStack Orientation="Orientation.Vertical">
+        <FluentButton IconStart="@(new Icons.Regular.Size16.Add())" Appearance="Appearance.Accent" OnClick="@OpenRecipeFormDialogAsync">Create a new recipe</FluentButton>
+
+        @if (RecipesCollection.Any())
+        {
+            <FluentStack Orientation="Orientation.Vertical">
+                @foreach (var recipe in RecipesCollection)
+                {
+                    <FluentCard>
+                        <p>@recipe.Name</p>
+                        <p>@recipe.Description</p>
+                    </FluentCard>
+                }
+            </FluentStack>
+        }
+        else
+        {
+            <p>No recipes found. Create your first recipe.</p>
+        }
+    </FluentStack>
 }
 
 @code {
+    private bool _trapFocus = true;
+    private bool _modal = true;
+
     public IEnumerable<RecipeResponse> RecipesCollection = new List<RecipeResponse>();
     public bool Loading = true;
+
+    RecipeForm recipe = new()
+    {
+        Name = string.Empty,
+        Description = string.Empty
+    };
 
     protected override async Task OnInitializedAsync()
     {
         await UserService.LoadUserDetails();
         RecipesCollection = await RecipeService.GetRecipes();
         Loading = false;
+    }
+
+    public async Task OpenRecipeFormDialogAsync()
+    {
+        DialogParameters parameters = new()
+        {
+            Title = $"Create a new recipe",
+            PrimaryAction = "Create",
+            PrimaryActionEnabled = false,
+            SecondaryAction = "Cancel",
+            Width = "500px",
+            TrapFocus = _trapFocus,
+            Modal = _modal,
+            PreventScroll = true
+        };
+
+        IDialogReference dialog = await DialogService.ShowDialogAsync<RecipeFormDialog>(recipe, parameters);
+        DialogResult? result = await dialog.Result;
+
+
+        if (result.Data is not null)
+        {
+            RecipeForm? recipe = result.Data as RecipeForm;
+        }
     }
 }
 

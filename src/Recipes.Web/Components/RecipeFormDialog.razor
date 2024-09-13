@@ -1,0 +1,17 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components
+@using Recipes.Web.Models
+
+@implements IDialogContentComponent<RecipeForm>
+
+<FluentStack Orientation="Orientation.Vertical">
+    <FluentTextField @bind-Value="@Content.Name">Name</FluentTextField>
+    <FluentTextField @bind-Value="@Content.Description">Description</FluentTextField>
+</FluentStack>
+
+@code {
+    [Parameter]
+    public RecipeForm Content { get; set; } = default!;
+
+    [CascadingParameter]
+    public FluentDialog? Dialog { get; set; }
+}
