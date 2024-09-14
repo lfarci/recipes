@@ -21,4 +21,9 @@ public class RecipeService : WebApiService, IRecipesService
 
         return recipes;
     }
+
+    public async Task CreateRecipe(RecipeResponse recipe)
+    {
+        await Post("recipes", recipe);
+    }
 }

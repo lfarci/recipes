@@ -39,11 +39,20 @@ else
 }
 
 @code {
-    private bool _trapFocus = true;
-    private bool _modal = true;
-
     public IEnumerable<RecipeResponse> RecipesCollection = new List<RecipeResponse>();
     public bool Loading = true;
+
+    private DialogParameters _dialogParameters = new()
+    {
+        Title = $"Create a new recipe",
+        PrimaryAction = "Create",
+        PrimaryActionEnabled = true,
+        SecondaryAction = "Cancel",
+        Width = "500px",
+        TrapFocus = true,
+        Modal = true,
+        PreventScroll = true
+    };
 
     RecipeForm recipe = new()
     {
@@ -60,25 +69,23 @@ else
 
     public async Task OpenRecipeFormDialogAsync()
     {
-        DialogParameters parameters = new()
-        {
-            Title = $"Create a new recipe",
-            PrimaryAction = "Create",
-            PrimaryActionEnabled = false,
-            SecondaryAction = "Cancel",
-            Width = "500px",
-            TrapFocus = _trapFocus,
-            Modal = _modal,
-            PreventScroll = true
-        };
+        var dialog = await DialogService.ShowDialogAsync<RecipeFormDialog>(recipe, _dialogParameters);
+        var result = await dialog.Result;
 
-        IDialogReference dialog = await DialogService.ShowDialogAsync<RecipeFormDialog>(recipe, parameters);
-        DialogResult? result = await dialog.Result;
-
-
-        if (result.Data is not null)
+        @if (result.Data is not null)
         {
             RecipeForm? recipe = result.Data as RecipeForm;
+
+            var newRecipe = new RecipeResponse()
+            {
+                Name = recipe?.Name ?? string.Empty,
+                Description = recipe?.Description ?? string.Empty
+            };
+
+
+            await RecipeService.CreateRecipe(newRecipe);
+
+            RecipesCollection = RecipesCollection.Append(newRecipe).ToList();
         }
     }
 }

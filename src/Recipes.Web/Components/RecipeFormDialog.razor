@@ -2,16 +2,86 @@
 @using Recipes.Web.Models
 
 @implements IDialogContentComponent<RecipeForm>
+@implements IDisposable
 
-<FluentStack Orientation="Orientation.Vertical">
-    <FluentTextField @bind-Value="@Content.Name">Name</FluentTextField>
-    <FluentTextField @bind-Value="@Content.Description">Description</FluentTextField>
-</FluentStack>
+<EditForm EditContext="@EditContext" OnValidSubmit="@Submit" FormName="RecipeFormDialog">
+    <DataAnnotationsValidator />
+
+    <FluentDialogHeader ShowDismiss="true">
+        <FluentLabel Typo="Typography.PaneHeader">
+            @Dialog.Instance.Parameters.Title
+        </FluentLabel>
+    </FluentDialogHeader>
+
+    <FluentDialogBody>
+        <FluentStack Class="fieldsGroup" Orientation="Orientation.Vertical">
+            <FluentTextField Name="Name" Class="field" @bind-Value="@Content.Name">Name</FluentTextField>
+            <FluentValidationMessage For="@(() => Content.Name)" />
+            <FluentTextArea Name="Description" Class="field" @bind-Value="@Content.Description">Description</FluentTextArea>
+            <FluentValidationMessage For="@(() => Content.Description)" />
+        </FluentStack>
+    </FluentDialogBody>
+
+    <FluentDialogFooter>
+        <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Create</FluentButton>
+        <FluentButton Appearance="Appearance.Neutral" OnClick="@CancelAsync">Cancel</FluentButton>
+    </FluentDialogFooter>
+</EditForm>
+
 
 @code {
     [Parameter]
     public RecipeForm Content { get; set; } = default!;
 
     [CascadingParameter]
-    public FluentDialog? Dialog { get; set; }
+    public FluentDialog Dialog { get; set; } = default!;
+
+    public EditContext? EditContext;
+
+    public ValidationMessageStore? MessageStore;
+
+    protected override void OnInitialized()
+    {
+        EditContext = new(Content);
+        MessageStore = new(EditContext);
+
+        EditContext.OnValidationRequested += OnValidationRequested;
+    }
+
+    private void OnValidationRequested(object? sender, ValidationRequestedEventArgs args)
+    {
+        if (string.IsNullOrEmpty(Content.Name))
+        {
+            MessageStore?.Add(() => Content.Name, "Please provide a name for the recipe.");
+        }
+
+        if (string.IsNullOrEmpty(Content.Description))
+        {
+            MessageStore?.Add(() => Content.Description, "Please provide a short description for your recipe.");
+        }
+    }
+
+    public async Task Submit()
+    {
+        await Dialog.CloseAsync(Content);
+    }
+
+    private async Task CancelAsync()
+    {
+        await Dialog.CancelAsync();
+    }
+
+    public void Dispose()
+    {
+        if (EditContext is not null)
+        {
+            EditContext.OnValidationRequested -= OnValidationRequested;
+        }
+    }
 }
+
+<style>
+    .field, .fieldsGroup {
+        width: 100%;
+    }
+</style>

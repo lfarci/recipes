@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Net;
+using System.Text;
 
 namespace Recipes.Web
 {
@@ -63,6 +64,15 @@ namespace Recipes.Web
         public async Task<ApiResponse<T>> Get<T>(string path)
         {
             return await Get<T>(path, ReadJsonContent<T>);
+        }
+
+        public async Task Post<T>(string path, T data)
+        {
+            var request = await BuildHttpRequestMessage(HttpMethod.Post, path);
+
+            request.Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+
+            await _http.SendAsync(request);
         }
 
         public async Task<ApiResponse<string>> GetAsBase64(string path) => await Get(path, ReadBase64Content);
