@@ -54,7 +54,7 @@ else
         PreventScroll = true
     };
 
-    RecipeForm recipe = new()
+    RecipeForm Recipe = new()
     {
         Name = string.Empty,
         Description = string.Empty
@@ -69,7 +69,7 @@ else
 
     public async Task OpenRecipeFormDialogAsync()
     {
-        var dialog = await DialogService.ShowDialogAsync<RecipeFormDialog>(recipe, _dialogParameters);
+        var dialog = await DialogService.ShowDialogAsync<RecipeFormDialog>(Recipe, _dialogParameters);
         var result = await dialog.Result;
 
         @if (result.Data is not null)
@@ -82,11 +82,18 @@ else
                 Description = recipe?.Description ?? string.Empty
             };
 
-
             await RecipeService.CreateRecipe(newRecipe);
 
             RecipesCollection = RecipesCollection.Append(newRecipe).ToList();
         }
+
+        Clear();
+    }
+
+    public void Clear()
+    {
+        Recipe.Name = string.Empty;
+        Recipe.Description = string.Empty;
     }
 }
 
