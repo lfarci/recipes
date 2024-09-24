@@ -1,0 +1,20 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components
+
+<FluentCard>
+    <p class="recipe-name">@Name</p>
+    <p>@Description</p>
+</FluentCard>
+
+@code {
+    [Parameter]
+    public string Name { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Description { get; set; } = string.Empty;
+}
+
+<style>
+    .recipe-name {
+        font-weight: bold;
+    }
+</style>

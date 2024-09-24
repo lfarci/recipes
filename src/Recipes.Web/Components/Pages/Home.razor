@@ -24,10 +24,11 @@ else
             <FluentStack Orientation="Orientation.Vertical">
                 @foreach (var recipe in RecipesCollection)
                 {
-                    <FluentCard>
+                    <RecipeCard Name="@recipe.Name" Description="@recipe.Description" />
+@*                     <FluentCard>
                         <p class="recipe-name">@recipe.Name</p>
                         <p>@recipe.Description</p>
-                    </FluentCard>
+                    </FluentCard> *@
                 }
             </FluentStack>
         }
@@ -105,9 +106,5 @@ else
 
     .card {
         margin: 10px;
-    }
-
-    .recipe-name {
-        font-weight: bold;
     }
 </style>
