@@ -19,23 +19,7 @@ else
     <FluentStack Orientation="Orientation.Vertical">
         <FluentButton IconStart="@(new Icons.Regular.Size16.Add())" Appearance="Appearance.Accent" OnClick="@OpenRecipeFormDialogAsync">Create a new recipe</FluentButton>
 
-        @if (RecipesCollection.Any())
-        {
-            <FluentStack Orientation="Orientation.Vertical">
-                @foreach (var recipe in RecipesCollection)
-                {
-                    <RecipeCard Name="@recipe.Name" Description="@recipe.Description" />
-@*                     <FluentCard>
-                        <p class="recipe-name">@recipe.Name</p>
-                        <p>@recipe.Description</p>
-                    </FluentCard> *@
-                }
-            </FluentStack>
-        }
-        else
-        {
-            <p>No recipes found. Create your first recipe.</p>
-        }
+        <RecipeCardsStack Recipes="@RecipesCollection" />
     </FluentStack>
 }
 
@@ -97,14 +81,3 @@ else
         Recipe.Description = string.Empty;
     }
 }
-
-<style>
-    .card-container {
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    .card {
-        margin: 10px;
-    }
-</style>
