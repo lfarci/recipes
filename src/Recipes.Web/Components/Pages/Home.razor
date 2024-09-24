@@ -25,7 +25,7 @@ else
                 @foreach (var recipe in RecipesCollection)
                 {
                     <FluentCard>
-                        <p>@recipe.Name</p>
+                        <p class="recipe-name">@recipe.Name</p>
                         <p>@recipe.Description</p>
                     </FluentCard>
                 }
@@ -105,5 +105,9 @@ else
 
     .card {
         margin: 10px;
+    }
+
+    .recipe-name {
+        font-weight: bold;
     }
 </style>
