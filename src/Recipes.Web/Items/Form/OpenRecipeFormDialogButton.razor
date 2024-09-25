@@ -1,0 +1,54 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components
+@using Recipes.Web.Items.Cards
+@using Recipes.Web.Items.Form
+@using Recipes.Web.Models
+
+@inject IUserService UserService
+@inject IRecipesService RecipeService
+@inject IDialogService DialogService
+
+<FluentButton IconStart="@(new Icons.Regular.Size16.Add())"
+              Appearance="Appearance.Accent"
+              OnClick="@OpenRecipeFormDialogAsync">Create a new recipe</FluentButton>
+
+@code {
+    [Parameter]
+    public EventCallback<RecipeForm> OnRecipeSubmitted { get; set; }
+
+    private DialogParameters _dialogParameters = new()
+    {
+        Title = $"Create a new recipe",
+        PrimaryAction = "Create",
+        PrimaryActionEnabled = true,
+        SecondaryAction = "Cancel",
+        Width = "90%",
+        TrapFocus = true,
+        Modal = true,
+        PreventScroll = true
+    };
+
+    RecipeForm Recipe = new()
+    {
+        Name = string.Empty,
+        Description = string.Empty
+    };
+
+    public async Task OpenRecipeFormDialogAsync()
+    {
+        var dialog = await DialogService.ShowDialogAsync<RecipeFormDialog>(Recipe, _dialogParameters);
+        var result = await dialog.Result;
+
+        @if (result.Data is not null)
+        {
+            await OnRecipeSubmitted.InvokeAsync(result.Data as RecipeForm);
+        }
+
+        ClearForm();
+    }
+
+    public void ClearForm()
+    {
+        Recipe.Name = string.Empty;
+        Recipe.Description = string.Empty;
+    }
+}
