@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Net;
 using System.Text;
 
-namespace Recipes.Web
+namespace Recipes.Web.Common
 {
     public class ApiResponse<T>
     {
@@ -63,7 +63,7 @@ namespace Recipes.Web
 
         public async Task<ApiResponse<T>> Get<T>(string path)
         {
-            return await Get<T>(path, ReadJsonContent<T>);
+            return await Get(path, ReadJsonContent<T>);
         }
 
         public async Task Post<T>(string path, T data)
