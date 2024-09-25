@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Recipes.Web;
-using Recipes.Web.Components;
 using Recipes.Web.Users;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
