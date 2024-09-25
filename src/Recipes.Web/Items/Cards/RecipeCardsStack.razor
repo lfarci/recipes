@@ -7,7 +7,7 @@
         <FluentStack Orientation="Orientation.Vertical">
             @foreach (var recipe in Recipes)
             {
-                <RecipeCard Name="@recipe.Name" Description="@recipe.Description" />
+                <RecipeCard Recipe="@recipe" />
             }
         </FluentStack>
     }

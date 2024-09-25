@@ -10,6 +10,19 @@ public class RecipeService : WebApiService, IRecipesService
     {
     }
 
+    public async Task<RecipeResponse?> GetRecipe(long recipeId)
+    {
+        var response = await Get<RecipeResponse>($"recipes/{recipeId}");
+        RecipeResponse? recipe = null;
+
+        if (response.Success)
+        {
+            recipe = response.Value ?? new RecipeResponse();
+        }
+
+        return recipe;
+    }
+
     public async Task<IEnumerable<RecipeResponse>> GetRecipes()
     {
         var response = await Get<IEnumerable<RecipeResponse>>("recipes?page=1&size=1000");

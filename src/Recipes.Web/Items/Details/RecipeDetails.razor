@@ -1,0 +1,55 @@
+﻿@page "/recipes/{recipeId:long}"
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject IUserService UserService
+@inject IRecipesService RecipeService
+
+@if (Loading)
+{
+    <p>Loading your recipe...</p>
+}
+else
+{
+    @if (ErrorMessage == null)
+    {
+        <h1>@Recipe?.Name</h1>
+        <p>@Recipe?.Description</p>
+    }
+    else
+    {
+        <p>@ErrorMessage</p>
+    }
+}
+
+
+@code {
+    [Parameter]
+    public long RecipeId { get; set; } = long.MinValue;
+
+    public RecipeResponse? Recipe = null;
+    public bool Loading = true;
+    public string? ErrorMessage = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await UserService.LoadUserDetails();
+            Recipe = await RecipeService.GetRecipe(RecipeId);
+
+            if (Recipe == null)
+            {
+                ErrorMessage = "Recipe not found.";
+            }
+
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to fetch the recipe: {ex.Message}";
+        }
+
+        Loading = false;
+    }
+}

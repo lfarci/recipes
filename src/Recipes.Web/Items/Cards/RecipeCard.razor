@@ -1,16 +1,16 @@
 ﻿@using Microsoft.FluentUI.AspNetCore.Components
 
 <FluentCard>
-    <p class="recipe-name">@Name</p>
-    <p>@Description</p>
+    <p class="recipe-name">@Recipe.Name</p>
+    <p>@Recipe.Description</p>
+    <a href="@RecipeUrl">View</a>
 </FluentCard>
 
 @code {
     [Parameter]
-    public string Name { get; set; } = string.Empty;
+    public RecipeResponse Recipe { get; set; } = new RecipeResponse();
 
-    [Parameter]
-    public string Description { get; set; } = string.Empty;
+    public string RecipeUrl => $"/recipes/{Recipe.Id}";
 }
 
 <style>
