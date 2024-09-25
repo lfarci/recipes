@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Net;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Recipes.Web.Common
 {
@@ -64,6 +65,13 @@ namespace Recipes.Web.Common
         public async Task<ApiResponse<T>> Get<T>(string path)
         {
             return await Get(path, ReadJsonContent<T>);
+        }
+
+        public async Task Delete(string path)
+        {
+            var request = await BuildHttpRequestMessage(HttpMethod.Delete, path);
+
+            await _http.SendAsync(request);
         }
 
         public async Task Post<T>(string path, T data)

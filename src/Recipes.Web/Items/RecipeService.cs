@@ -40,4 +40,9 @@ public class RecipeService : WebApiService, IRecipesService
     {
         await Post("recipes", recipe);
     }
+
+    public async Task DeleteRecipe(long recipeId)
+    {
+        await Delete($"recipes/{recipeId}");
+    }
 }

@@ -2,9 +2,11 @@
 @attribute [Authorize]
 
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.FluentUI.AspNetCore.Components
 
 @inject IUserService UserService
 @inject IRecipesService RecipeService
+@inject NavigationManager Navigation
 
 @if (Loading)
 {
@@ -16,13 +18,14 @@ else
     {
         <h1>@Recipe?.Name</h1>
         <p>@Recipe?.Description</p>
+
+        <FluentButton Appearance="Appearance.Accent" OnClick="@Delete">Delete</FluentButton>
     }
     else
     {
         <p>@ErrorMessage</p>
     }
 }
-
 
 @code {
     [Parameter]
@@ -51,5 +54,18 @@ else
         }
 
         Loading = false;
+    }
+
+    private async Task Delete()
+    {
+        try
+        {
+            await RecipeService.DeleteRecipe(RecipeId);
+            Navigation.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to delete the recipe: {ex.Message}";
+        }
     }
 }
