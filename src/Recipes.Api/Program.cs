@@ -23,12 +23,13 @@ builder.Services.AddLogging(loggingBuilder =>
     loggingBuilder.AddAzureWebAppDiagnostics();
 });
 
-var connectionStringName = "RecipesDatabase";
-var connectionString = builder.Configuration.GetConnectionString(connectionStringName) ??
-                       Environment.GetEnvironmentVariable($"SQLCONNSTR_{connectionStringName}");
+var cosmosDbConnectionStringName = "RecipesDocumentDatabase";
+var cosmosDbConnectionString = builder.Configuration.GetConnectionString(cosmosDbConnectionStringName) ??
+                       Environment.GetEnvironmentVariable($"DOCDBCONNSTR_{cosmosDbConnectionStringName}");
+
 
 builder.Services
-    .AddDbContext<RecipesDbContext>(options => options.UseSqlServer(connectionString));
+    .AddDbContext<RecipesDbContext>(options => options.UseCosmos(cosmosDbConnectionString!, "Recipes"));
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IRecipeService, RecipeService>();

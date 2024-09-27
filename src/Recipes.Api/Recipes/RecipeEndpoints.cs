@@ -25,7 +25,7 @@ namespace Recipes.Api.Recipes
             return Results.Ok(await recipes.GetRecipes(user.Id, page, size));
         }
 
-        private static async Task<IResult> GetRecipe(IUserService users, IRecipeService recipes, long recipeId)
+        private static async Task<IResult> GetRecipe(IUserService users, IRecipeService recipes, string recipeId)
         {
             var user = await users.GetAuthenticatedUser();
 
@@ -46,7 +46,7 @@ namespace Recipes.Api.Recipes
             }
         }
 
-        private static async Task<IResult> EditRecipe(IUserService users, IRecipeService recipes, long recipeId, RecipeRequest recipe)
+        private static async Task<IResult> EditRecipe(IUserService users, IRecipeService recipes, string recipeId, RecipeRequest recipe)
         {
             var user = await users.GetAuthenticatedUser();
 
@@ -72,7 +72,7 @@ namespace Recipes.Api.Recipes
             return Results.Ok(await recipes.AddRecipe(user.Id, recipe));
         }
 
-        private static async Task<IResult> DeleteRecipe(IUserService users, IRecipeService recipes, long recipeId)
+        private static async Task<IResult> DeleteRecipe(IUserService users, IRecipeService recipes, string recipeId)
         {
             var user = await users.GetAuthenticatedUser();
 

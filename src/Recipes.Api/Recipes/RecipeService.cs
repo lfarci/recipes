@@ -22,7 +22,7 @@ namespace Recipes.Api.Recipes
 
             var recipes = await _db.Recipes
                 .Where(r => r.OwnerId == userId)
-                .Select(r => new RecipeResponse(r.Id, r.Name, r.Description))
+                .Select(r => new RecipeResponse(r.Id.ToString() ?? string.Empty, r.Name, r.Description))
                 .Skip(skip)
                 .Take(pageSize)
                 .ToListAsync();
@@ -32,7 +32,7 @@ namespace Recipes.Api.Recipes
             return recipes;
         }
 
-        public async Task<RecipeResponse?> GetRecipe(string userId, long recipeId)
+        public async Task<RecipeResponse?> GetRecipe(string userId, string recipeId)
         {
             var entity = await GetRecipeEntity(userId, recipeId);
             RecipeResponse? recipe = null;
@@ -44,13 +44,13 @@ namespace Recipes.Api.Recipes
             else
             {
                 _logger.LogInformation("Recipe with ID of {RecipeId} found for user with ID of {UserId}.", recipeId, userId);
-                recipe = new RecipeResponse(entity.Id, entity.Name, entity.Description);
+                recipe = new RecipeResponse(entity.Id.ToString() ?? string.Empty, entity.Name, entity.Description);
             }
 
             return recipe;
         }
 
-        public async Task EditRecipe(string userId, long recipeId, RecipeRequest newRecipe)
+        public async Task EditRecipe(string userId, string recipeId, RecipeRequest newRecipe)
         {
             var recipe = await GetRecipeEntity(userId, recipeId);
 
@@ -69,14 +69,9 @@ namespace Recipes.Api.Recipes
             }
         }
 
-        public async Task<long> AddRecipe(string userId, RecipeRequest newRecipe)
+        public async Task<string> AddRecipe(string userId, RecipeRequest newRecipe)
         {
-            if (!await _db.Users.AnyAsync(u => u.Id == userId))
-            {
-                throw new InvalidOperationException($"User with ID of {userId} does not exist.");
-            }
-
-            var addedRecipe = await _db.Recipes.AddAsync(new RecipeEntity
+            var addedRecipe = await _db.Recipes.AddAsync(new Recipe
             {
                 Name = newRecipe.Name,
                 Description = newRecipe.Description,
@@ -85,10 +80,10 @@ namespace Recipes.Api.Recipes
 
             await _db.SaveChangesAsync();
 
-            return addedRecipe.Entity.Id;
+            return addedRecipe.Entity.Id.ToString() ?? string.Empty;
         }
 
-        public async Task DeleteRecipe(string userId, long recipeId)
+        public async Task DeleteRecipe(string userId, string recipeId)
         {
             var recipe = await GetRecipeEntity(userId, recipeId);
 
@@ -104,16 +99,16 @@ namespace Recipes.Api.Recipes
             }
         }
 
-        private void NotFound(string userId, long recipeId)
+        private void NotFound(string userId, string recipeId)
         {
             _logger.LogWarning("Recipe with ID of {RecipeId} not found for user with ID of {UserId}.", recipeId, userId);
             throw new InvalidOperationException($"User with ID of {userId} or recipe with ID of {recipeId} not found.");
         }
 
-        private async Task<RecipeEntity?> GetRecipeEntity(string userId, long recipeId)
+        private async Task<Recipe?> GetRecipeEntity(string userId, string recipeId)
         {
             return await _db.Recipes
-                .Where(r => r.Id == recipeId && r.OwnerId == userId)
+                .Where(r => r.Id == Guid.Parse(recipeId) && r.OwnerId == userId)
                 .FirstOrDefaultAsync();
         }
     }
