@@ -1,4 +1,13 @@
-## Database
+# About
+Initially , the project was using a SQL Server database. Azure offers a free instance by subscription. It was migrated to Azure Cosmos DB for the sake of learning and testing.
+
+# Azure Cosmos DB
+
+## Documentation
+- [EF Core Azure Cosmos DB Provider](https://learn.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli#get-started)
+- [Tutorial: Develop an ASP.NET web application with Azure Cosmos DB for NoSQL](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/tutorial-dotnet-web-app)
+
+# Database (SQL Server, deprecated)
 How to setup a database connection to a SQL Server instance on Azure: https://learn.microsoft.com/en-gb/azure/azure-sql/database/azure-sql-dotnet-entity-framework-core-quickstart?view=azuresql&tabs=visual-studio%2Cazure-portal%2Cportal.
 
 
