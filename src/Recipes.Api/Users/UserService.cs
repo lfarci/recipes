@@ -72,8 +72,6 @@ namespace Recipes.Api.Users
 
         public async Task<UserResponse?> GetAuthenticatedUser()
         {
-            Http?.VerifyUserHasAnyAcceptedScope("Recipes.User.Read");
-
             var userId = GetAuthenticatedUserId();
 
             if (string.IsNullOrEmpty(userId))
@@ -95,8 +93,6 @@ namespace Recipes.Api.Users
 
         public async Task<Stream?> GetUserPhoto()
         {
-            Http?.VerifyUserHasAnyAcceptedScope("Recipes.User.Read");
-
             var userId = GetAuthenticatedUserId();
 
             if (string.IsNullOrEmpty(userId))

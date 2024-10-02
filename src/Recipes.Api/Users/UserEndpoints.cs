@@ -38,8 +38,6 @@ namespace Recipes.Api.Users
 
         private static async Task<IResult> CreateUser(HttpContext httpContext, UserRequest user, RecipesDbContext dbContext)
         {
-            httpContext.VerifyUserHasAnyAcceptedScope("Recipes.User.Write");
-
             var emailClaim = httpContext?.User?.FindFirst(ClaimTypes.Email);
             if (emailClaim == null)
             {
