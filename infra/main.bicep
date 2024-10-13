@@ -1,27 +1,26 @@
-// var entraIdInstance = 'https://login.microsoftonline.com/'
+param applicationName string
+param environmentName string
+param deploymentScriptIdentityName string
+param location string = resourceGroup().location
+param adminUserObjectId string
+param entraIdInstance string
 
-// This is the application ID of the service principal, the registration could be created automatically
-// var entraIdApplicationId = '92eed23b-512e-4052-ba33-0baeca5b8211'
+var fullApplicationName = '${applicationName}-${environmentName}'
+var keyVaultName = '${fullApplicationName}-kv'
+var applicationRegistrationName = '${fullApplicationName}-app'
+var apiName = '${fullApplicationName}-api'
+var databaseAccountName = '${fullApplicationName}-cosmos-db'
 
-var keyVaultName = 'lfarci-recipes-dev-3-kv'
-var clientName = 'lfarci-recipes-app-dev'
-var apiName = 'lfarci-recipes-dev-api'
-var managedIdentityName = 'script-identity'
-
-var databaseAccountName = 'lfarci-recipes-cosmos-db-dev-2'
-var databaseLocation = 'Germany West Central'
-
-var userObjectId = '84ea8042-abd6-43d4-b663-a7edc74074c9' // logan.farci@avanade.com
 
 @description('The user identity for the deployment script.')
 resource scriptIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2022-01-31-preview' existing = {
-  name: managedIdentityName
+  name: deploymentScriptIdentityName
   scope: resourceGroup()
 }
 
 resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
   name: keyVaultName
-  location: resourceGroup().location
+  location: location
   properties: {
     sku: {
       family: 'A'
@@ -42,7 +41,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
       }
       {
         tenantId: subscription().tenantId
-        objectId: userObjectId
+        objectId: adminUserObjectId
         permissions: {
           secrets: [
             'get'
@@ -59,8 +58,8 @@ module appRegistration 'appRegistration.bicep' = {
   name: 'appRegistration'
   params: {
     keyVaultName: keyVaultName
-    applicationName: clientName
-    managedIdentityName: managedIdentityName
+    applicationName: applicationRegistrationName
+    managedIdentityName: deploymentScriptIdentityName
   }
 }
 
@@ -68,7 +67,7 @@ module databaseModule 'database.bicep' = {
   name: 'database'
   params: {
     accountName: databaseAccountName
-    location: databaseLocation
+    location: location
     keyVaultName: keyVaultName
   }
 }
@@ -80,7 +79,7 @@ module apiModule 'api.bicep' = {
     entraIdClientId: appRegistration.outputs.applicationClientId
     entraIdClientSecretName: appRegistration.outputs.clientSecretName
     entraIdDomain: 'lfarciava.onmicrosoft.com'
-    entraIdInstance: 'https://login.microsoftonline.com/'
+    entraIdInstance: entraIdInstance
     cosmosDbConnectionStringSecretName: 'CosmosDBConnectionString'
     keyVaultName: keyVaultName
   }
