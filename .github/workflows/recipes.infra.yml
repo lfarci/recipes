@@ -1,7 +1,7 @@
 name: Deploy Azure resources
 
 env:
-  RESOURCE_GROUP: 'lfarci-recipes-rg'
+  RESOURCE_GROUP: 'lfarci-recipes-dev-debug-${{ github.run_id }}-rg'
   TEMPLATES_DIRECTORY: './infra'
   LOCATION: 'westeurope'
 
@@ -31,19 +31,18 @@ jobs:
             --name ${{ env.RESOURCE_GROUP }} \
             --location ${{ env.LOCATION }}
 
-      - name: Deploy Azure web app for API
-        working-directory: ${{ env.TEMPLATES_DIRECTORY }}
+      - name:
         run: |
-            az deployment group create \
-            --resource-group ${{ env.RESOURCE_GROUP }} \
-            --template-file api.bicep \
-            --parameters api.dev.bicepparam \
-            --parameters entraIdClientSecret=${{ secrets.ENTRA_ID_CLIENT_SECRET }}
+          ./infra/scripts/create-script-identity.sh \
+            --managed-identity-name "app-registration-mi" \
+            --resource-group-name ${{ env.RESOURCE_GROUP }} \
+            --tenant-id ${{ vars.AZURE_TENANT_ID }} \
+            --location ${{ env.LOCATION }}
 
       - name: Deploy Azure static web app for frontend
         working-directory: ${{ env.TEMPLATES_DIRECTORY }}
         run: |
           az deployment group create \
             --resource-group ${{ env.RESOURCE_GROUP }} \
-            --template-file web.bicep \
-            --parameters web.dev.bicepparam
+            --template-file main.bicep \
+            --parameters dev.bicepparam

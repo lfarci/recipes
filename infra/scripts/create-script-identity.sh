@@ -1,12 +1,27 @@
-managedIdentityName='script-identity'
-resourceGroupName='lfarci-recipes-test-5'
-location='westeurope'
-tenantId="ffa5591d-cae2-492c-8674-129a6be07489"
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --managed-identity-name) managedIdentityName="$2"; shift ;;
+        --resource-group-name) resourceGroupName="$2"; shift ;;
+        --location) location="$2"; shift ;;
+        --tenant-id) tenantId="$2"; shift ;;
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
 
+if [ -z "$resourceGroupName" ] || [ -z "$location" ] || [ -z "$tenantId" ]; then
+    echo "All parameters --resource-group-name, --location, and --tenant-id are required."
+    exit 1
+fi
+
+if [ -z "$managedIdentityName" ]; then
+    managedIdentityName='script-identity'
+    echo "No --managed-identity-name specified. Using default name: $managedIdentityName"
+fi
+
+echo "Creating managed identity $managedIdentityName in resource group $resourceGroupName in location $location for tenant $tenantId."
 userAssignedIdentity=$(az identity create --name $managedIdentityName --resource-group $resourceGroupName --location $location)
-
 managedIdentityObjectId=$(jq -r '.principalId' <<< "$userAssignedIdentity")
-
 
 graphAppId='00000003-0000-0000-c000-000000000000' # This is a well-known Microsoft Graph application ID.
 graphApiAppRoleName='Application.ReadWrite.All'
