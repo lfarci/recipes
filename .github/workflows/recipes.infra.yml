@@ -33,6 +33,7 @@ jobs:
 
       - name:
         run: |
+          chmod +x ./infra/scripts/create-script-identity.sh
           ./infra/scripts/create-script-identity.sh \
             --managed-identity-name "app-registration-mi" \
             --resource-group-name ${{ env.RESOURCE_GROUP }} \
