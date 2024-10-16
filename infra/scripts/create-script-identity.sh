@@ -19,13 +19,18 @@ if [ -z "$managedIdentityName" ]; then
     echo "No --managed-identity-name specified. Using default name: $managedIdentityName"
 fi
 
-echo "Current user"
-currentUser=$(az account show -o json)
 
 echo "Service principal"
 servicePrincipal=$(az ad sp list --display-name GitHub-Actions --query "[].{displayName:displayName, appId:appId, id:id}" -o json)
+servicePrincipalId=$(jq -r '.[0].id' <<< "$servicePrincipal")
 
-echo $servicePrincipal
+echo "Service principal: $servicePrincipal"
+echo "ID: $servicePrincipalId"
+
+role=$(az role assignment create --assignee $servicePrincipalId --role Owner --scope /subscriptions/fc81e4c5-5743-42d9-bdf8-7e794257d3ab/resourceGroups/$resourceGroupName)
+
+echo "Role: $role"
+
 
 echo "Creating managed identity $managedIdentityName in resource group $resourceGroupName in location $location for tenant $tenantId."
 userAssignedIdentity=$(az identity create --name $managedIdentityName --resource-group $resourceGroupName --location $location)
