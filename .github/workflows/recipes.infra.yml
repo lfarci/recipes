@@ -20,6 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Login with a service principal secret: https://github.com/Azure/login#login-with-a-service-principal-secret
       - name: Set up Azure CLI
         uses: azure/login@v2
         with:
