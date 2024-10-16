@@ -19,6 +19,10 @@ if [ -z "$managedIdentityName" ]; then
     echo "No --managed-identity-name specified. Using default name: $managedIdentityName"
 fi
 
+echo "Current user"
+currentUser=$(az account show -o json)
+
+echo "Service principal"
 servicePrincipal=$(az ad sp list --display-name GitHub-Actions --query "[].{displayName:displayName, appId:appId, id:id}" -o json)
 
 echo $servicePrincipal
