@@ -21,16 +21,10 @@ if [ -z "$managedIdentityName" ]; then
     echo "No --managed-identity-name specified. Using default name: $managedIdentityName"
 fi
 
-az account set --subscription <subscription-id>
-
-az account show
-
 if ! az group show --name "$resourceGroupName" &> /dev/null; then
     echo "Resource group $resourceGroupName does not exist."
     exit 1
 fi
-
-
 
 echo "Creating managed identity $managedIdentityName in resource group $resourceGroupName in location $location for tenant $tenantId."
 userAssignedIdentity=$(az identity create --name $managedIdentityName --resource-group $resourceGroupName --location $location)
