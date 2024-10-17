@@ -56,7 +56,7 @@ requestBody=$(jq -n \
                   '{id: $id, principalId: $principalId, resourceId: $resourceId}' )
 
 echo "Assigning role to the managed identity..."
-az rest -m post -u "https://graph.windows.net/$tenantId/servicePrincipals/$managedIdentityObjectId/appRoleAssignments?api-version=1.6" -b "$requestBody"
+az rest -m post -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityObjectId/appRoleAssignments" -b "$requestBody"
 if [ $? -ne 0 ]; then
     echo "Failed to assign role to the managed identity."
     exit 1
