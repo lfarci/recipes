@@ -55,4 +55,3 @@ jobs:
             --resource-group ${{ env.RESOURCE_GROUP }} \
             --template-file main.bicep \
             --parameters dev.bicepparam
-            --parameters deploymentScriptIdentityName=${{ env.DEPLOYMENT_SCRIPT_IDENTITY }}
