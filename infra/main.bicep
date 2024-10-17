@@ -54,36 +54,36 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
   }
 }
 
-// module appRegistration 'appRegistration.bicep' = {
-//   name: 'appRegistration'
-//   params: {
-//     keyVaultName: keyVaultName
-//     applicationName: applicationRegistrationName
-//     managedIdentityName: deploymentScriptIdentityName
-//   }
-// }
+module appRegistration 'appRegistration.bicep' = {
+  name: 'appRegistration'
+  params: {
+    keyVaultName: keyVaultName
+    applicationName: applicationRegistrationName
+    managedIdentityName: deploymentScriptIdentityName
+  }
+}
 
-// module databaseModule 'database.bicep' = {
-//   name: 'database'
-//   params: {
-//     accountName: databaseAccountName
-//     location: location
-//     keyVaultName: keyVaultName
-//   }
-// }
+module databaseModule 'database.bicep' = {
+  name: 'database'
+  params: {
+    accountName: databaseAccountName
+    location: location
+    keyVaultName: keyVaultName
+  }
+}
 
-// module apiModule 'api.bicep' = {
-//   name: 'api'
-//   params: {
-//     appName: apiName
-//     entraIdClientId: appRegistration.outputs.applicationClientId
-//     entraIdClientSecretName: appRegistration.outputs.clientSecretName
-//     entraIdDomain: 'lfarciava.onmicrosoft.com'
-//     entraIdInstance: entraIdInstance
-//     cosmosDbConnectionStringSecretName: 'CosmosDBConnectionString'
-//     keyVaultName: keyVaultName
-//   }
-// }
+module apiModule 'api.bicep' = {
+  name: 'api'
+  params: {
+    appName: apiName
+    entraIdClientId: appRegistration.outputs.applicationClientId
+    entraIdClientSecretName: appRegistration.outputs.clientSecretName
+    entraIdDomain: 'lfarciava.onmicrosoft.com'
+    entraIdInstance: entraIdInstance
+    cosmosDbConnectionStringSecretName: 'CosmosDBConnectionString'
+    keyVaultName: keyVaultName
+  }
+}
 
 // module webModule 'web.bicep' = {
 //   name: 'webModule'
