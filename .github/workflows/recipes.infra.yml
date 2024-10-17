@@ -2,6 +2,7 @@ name: Deploy Azure resources
 
 env:
   RESOURCE_GROUP: 'lfarci-recipes-dev-debug-rg'
+  DEPLOYMENT_SCRIPT_IDENTITY: 'app-registration-mi'
   TEMPLATES_DIRECTORY: './infra'
   LOCATION: 'westeurope'
 
@@ -36,7 +37,7 @@ jobs:
         run: |
           chmod +x ./infra/scripts/create-script-identity.sh
           ./infra/scripts/create-script-identity.sh \
-            --managed-identity-name "app-registration-mi" \
+            --managed-identity-name ${{ env.DEPLOYMENT_SCRIPT_IDENTITY }} \
             --resource-group-name ${{ env.RESOURCE_GROUP }} \
             --tenant-id ${{ vars.AZURE_TENANT_ID }} \
             --location ${{ env.LOCATION }}
@@ -50,8 +51,8 @@ jobs:
       - name: Deploy Azure resources to ${{ env.RESOURCE_GROUP }} resource group
         working-directory: ${{ env.TEMPLATES_DIRECTORY }}
         run: |
-          az config set bicep.use_binary_from_path=true
           az deployment group create \
             --resource-group ${{ env.RESOURCE_GROUP }} \
             --template-file main.bicep \
             --parameters dev.bicepparam
+            --parameters deploymentScriptIdentityName=${{ env.DEPLOYMENT_SCRIPT_IDENTITY }}
