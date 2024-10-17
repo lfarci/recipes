@@ -26,13 +26,13 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Create resource group
+      - name: Create ${{ env.RESOURCE_GROUP }} resource group
         run: |
           az group create \
             --name ${{ env.RESOURCE_GROUP }} \
             --location ${{ env.LOCATION }}
 
-      - name:
+      - name: Create managed identity for the deployment script
         run: |
           chmod +x ./infra/scripts/create-script-identity.sh
           ./infra/scripts/create-script-identity.sh \
@@ -47,9 +47,10 @@ jobs:
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
 
-      - name: Deploy Azure static web app for frontend
+      - name: Deploy Azure resources to ${{ env.RESOURCE_GROUP }} resource group
         working-directory: ${{ env.TEMPLATES_DIRECTORY }}
         run: |
+          az config set bicep.use_binary_from_path=true
           az deployment group create \
             --resource-group ${{ env.RESOURCE_GROUP }} \
             --template-file main.bicep \
