@@ -19,6 +19,8 @@ if [ -z "$managedIdentityName" ]; then
     echo "No --managed-identity-name specified. Using default name: $managedIdentityName"
 fi
 
+az account show
+
 echo "Creating managed identity $managedIdentityName in resource group $resourceGroupName in location $location for tenant $tenantId."
 userAssignedIdentity=$(az identity create --name $managedIdentityName --resource-group $resourceGroupName --location $location)
 managedIdentityObjectId=$(jq -r '.principalId' <<< "$userAssignedIdentity")
