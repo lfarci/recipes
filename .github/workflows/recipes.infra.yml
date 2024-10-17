@@ -1,7 +1,7 @@
 name: Deploy Azure resources
 
 env:
-  RESOURCE_GROUP: 'lfarci-recipes-dev-debug-${{ github.run_id }}-rg'
+  RESOURCE_GROUP: 'lfarci-recipes-dev-debug-rg'
   TEMPLATES_DIRECTORY: './infra'
   LOCATION: 'westeurope'
 
@@ -46,7 +46,7 @@ jobs:
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
-          
+
       - name: Deploy Azure static web app for frontend
         working-directory: ${{ env.TEMPLATES_DIRECTORY }}
         run: |

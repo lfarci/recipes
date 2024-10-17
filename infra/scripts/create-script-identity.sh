@@ -1,5 +1,3 @@
-set -x
-
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --managed-identity-name) managedIdentityName="$2"; shift ;;
@@ -28,21 +26,40 @@ fi
 
 echo "Creating managed identity $managedIdentityName in resource group $resourceGroupName in location $location for tenant $tenantId."
 userAssignedIdentity=$(az identity create --name $managedIdentityName --resource-group $resourceGroupName --location $location)
+if [ $? -ne 0 ]; then
+    echo "Failed to create managed identity."
+    exit 1
+fi
+
 managedIdentityObjectId=$(jq -r '.principalId' <<< "$userAssignedIdentity")
+if [ -z "$managedIdentityObjectId" ]; then
+    echo "Failed to retrieve managed identity object ID."
+    exit 1
+fi
 
 graphAppId='00000003-0000-0000-c000-000000000000' # This is a well-known Microsoft Graph application ID.
 graphApiAppRoleName='Application.ReadWrite.All'
 graphApiApplication=$(az ad sp list --filter "appId eq '$graphAppId'" --query "{ appRoleId: [0] .appRoles [?value=='$graphApiAppRoleName'].id | [0], objectId:[0] .id }" -o json)
 
-# Get the app role for the Graph API.
 graphServicePrincipalObjectId=$(jq -r '.objectId' <<< "$graphApiApplication")
 graphApiAppRoleId=$(jq -r '.appRoleId' <<< "$graphApiApplication")
 
-# Assign the role to the managed identity.
+if [ -z "$graphServicePrincipalObjectId" ] || [ -z "$graphApiAppRoleId" ]; then
+    echo "Failed to retrieve Graph API application role details."
+    exit 1
+fi
+
 requestBody=$(jq -n \
                   --arg id "$graphApiAppRoleId" \
                   --arg principalId "$managedIdentityObjectId" \
                   --arg resourceId "$graphServicePrincipalObjectId" \
                   '{id: $id, principalId: $principalId, resourceId: $resourceId}' )
 
+echo "Assigning role to the managed identity..."
 az rest -m post -u "https://graph.windows.net/$tenantId/servicePrincipals/$managedIdentityObjectId/appRoleAssignments?api-version=1.6" -b "$requestBody"
+if [ $? -ne 0 ]; then
+    echo "Failed to assign role to the managed identity."
+    exit 1
+fi
+
+echo "Managed identity creation and role assignment completed successfully."
