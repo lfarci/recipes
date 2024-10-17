@@ -53,7 +53,7 @@ requestBody=$(jq -n \
                   --arg id "$graphApiAppRoleId" \
                   --arg principalId "$managedIdentityObjectId" \
                   --arg resourceId "$graphServicePrincipalObjectId" \
-                  '{id: $id, principalId: $principalId, resourceId: $resourceId}' )
+                  '{principalId: $principalId, resourceId: $resourceId, appRoleId: $id}' )
 
 echo "Assigning role to the managed identity..."
 az rest -m post -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityObjectId/appRoleAssignments" -b "$requestBody"
