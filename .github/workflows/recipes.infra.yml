@@ -37,7 +37,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Set resource group name
-        run: 
+        run: |
             echo "ENVIRONMENT_TAG=${{ github.event.inputs.environment_tag || 'dev' }}" >> $GITHUB_ENV
             echo "RESOURCE_GROUP=lfarci-recipes-${{ github.event.inputs.environment_tag || 'dev' }}-rg" >> $GITHUB_ENV
 
