@@ -66,4 +66,5 @@ jobs:
           az deployment group create \
             --resource-group ${{ env.RESOURCE_GROUP }} \
             --template-file main.bicep \
-            --parameters dev.bicepparam
+            --parameters dev.bicepparam \
+            --parameters environmentName=${{ github.event.inputs.environment_tag }}
