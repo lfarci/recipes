@@ -9,6 +9,13 @@ env:
   AZURE_CLI_VERSION: '2.65.0'
 
 on:
+  workflow_call:
+    inputs:
+      resource_group:
+        description: 'Resource group name'
+        required: false
+        default: 'lfarci-recipes-default-rg'
+        type: string
   push:
     branches:
       - master
