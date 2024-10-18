@@ -30,16 +30,18 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    env:
-      RESOURCE_GROUP: 'lfarci-recipes-${{ github.event.inputs.environment_tag }}-rg'
-
     steps:
       - name: Set up Azure CLI
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Create ${{ env.RESOURCE_GROUP_PREFIX }}${{ env.RESOURCE_GROUP_SUFFIX }} resource group
+      - name: Set resource group name
+        run: 
+            echo "ENVIRONMENT_TAG=${{ github.event.inputs.environment_tag || 'dev' }}" >> $GITHUB_ENV
+            echo "RESOURCE_GROUP=lfarci-recipes-${{ github.event.inputs.environment_tag || 'dev' }}-rg" >> $GITHUB_ENV
+
+      - name: Create ${{ env.RESOURCE_GROUP }} resource group
         run: |
           az group create \
             --name ${{ env.RESOURCE_GROUP }} \
@@ -67,4 +69,4 @@ jobs:
             --resource-group ${{ env.RESOURCE_GROUP }} \
             --template-file main.bicep \
             --parameters dev.bicepparam \
-            --parameters environmentName=${{ github.event.inputs.environment_tag }}
+            --parameters environmentName=${{ env.ENVIROMENT_TAG }}
