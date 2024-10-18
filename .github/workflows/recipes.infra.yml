@@ -35,20 +35,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # - name: Create managed identity for the deployment script
-      #   run: |
-      #     chmod +x ${{ env.SCRIPTS_DIRECTORY }}/create-script-identity.sh
-      #     ${{ env.SCRIPTS_DIRECTORY }}/create-script-identity.sh \
-      #       --managed-identity-name ${{ env.DEPLOYMENT_SCRIPT_IDENTITY }} \
-      #       --resource-group-name ${{ env.RESOURCE_GROUP }} \
-      #       --tenant-id ${{ vars.AZURE_TENANT_ID }} \
-      #       --location ${{ env.LOCATION }}
-      #   env:
-      #     AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      #     AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      #     AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-      #     AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-
       - name: Create managed identity for the deployment script
         uses: azure/cli@v2
         with:
