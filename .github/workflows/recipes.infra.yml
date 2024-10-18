@@ -5,6 +5,8 @@ env:
   DEPLOYMENT_SCRIPT_IDENTITY: 'app-registration-mi'
   TEMPLATES_DIRECTORY: './infra'
   LOCATION: 'westeurope'
+  SCRIPTS_DIRECTORY: './infra/scripts'
+  AZURE_CLI_VERSION: '2.65.0'
 
 on:
   push:
@@ -19,9 +21,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-
-      # Login with a service principal secret: https://github.com/Azure/login#login-with-a-service-principal-secret
       - name: Set up Azure CLI
         uses: azure/login@v2
         with:
@@ -33,20 +32,34 @@ jobs:
             --name ${{ env.RESOURCE_GROUP }} \
             --location ${{ env.LOCATION }}
 
-      - name: Create managed identity for the deployment script
-        run: |
-          chmod +x ./infra/scripts/create-script-identity.sh
-          ./infra/scripts/create-script-identity.sh \
-            --managed-identity-name ${{ env.DEPLOYMENT_SCRIPT_IDENTITY }} \
-            --resource-group-name ${{ env.RESOURCE_GROUP }} \
-            --tenant-id ${{ vars.AZURE_TENANT_ID }} \
-            --location ${{ env.LOCATION }}
-        env:
-          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
+      # - name: Create managed identity for the deployment script
+      #   run: |
+      #     chmod +x ${{ env.SCRIPTS_DIRECTORY }}/create-script-identity.sh
+      #     ${{ env.SCRIPTS_DIRECTORY }}/create-script-identity.sh \
+      #       --managed-identity-name ${{ env.DEPLOYMENT_SCRIPT_IDENTITY }} \
+      #       --resource-group-name ${{ env.RESOURCE_GROUP }} \
+      #       --tenant-id ${{ vars.AZURE_TENANT_ID }} \
+      #       --location ${{ env.LOCATION }}
+      #   env:
+      #     AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      #     AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      #     AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      #     AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Create managed identity for the deployment script
+        uses: azure/cli@v2
+        with:
+          azcliversion: ${{ env.AZURE_CLI_VERSION }}
+          inlineScript: |
+            chmod +x ${{ env.SCRIPTS_DIRECTORY }}/create-script-identity.sh
+            ${{ env.SCRIPTS_DIRECTORY }}/create-script-identity.sh \
+              --managed-identity-name ${{ env.DEPLOYMENT_SCRIPT_IDENTITY }} \
+              --resource-group-name ${{ env.RESOURCE_GROUP }} \
+              --tenant-id ${{ vars.AZURE_TENANT_ID }} \
+              --location ${{ env.LOCATION }}
 
       - name: Deploy Azure resources to ${{ env.RESOURCE_GROUP }} resource group
         working-directory: ${{ env.TEMPLATES_DIRECTORY }}
