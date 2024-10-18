@@ -4,6 +4,6 @@ public interface IRecipesService
 {
     Task CreateRecipe(RecipeResponse recipe);
     Task<IEnumerable<RecipeResponse>> GetRecipes();
-    Task<RecipeResponse?> GetRecipe(long recipeId);
-    Task DeleteRecipe(long recipeId);
+    Task<RecipeResponse?> GetRecipe(string recipeId);
+    Task DeleteRecipe(string recipeId);
 }

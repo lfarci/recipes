@@ -1,4 +1,4 @@
-﻿@page "/recipes/{recipeId:long}"
+﻿@page "/recipes/{recipeId}"
 @attribute [Authorize]
 
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
@@ -29,7 +29,7 @@ else
 
 @code {
     [Parameter]
-    public long RecipeId { get; set; } = long.MinValue;
+    public string RecipeId { get; set; } = string.Empty;
 
     public RecipeResponse? Recipe = null;
     public bool Loading = true;

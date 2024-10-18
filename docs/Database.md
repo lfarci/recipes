@@ -1,4 +1,18 @@
-## Database
+# About
+Initially , the project was using a SQL Server database. Azure offers a free instance by subscription. It was migrated to Azure Cosmos DB for the sake of learning and testing.
+
+# Azure Cosmos DB
+## Setup
+The Cosmos DB instance is created using a Bicep template and deployed using a new GitHub Action workflow. The new instance should contain a database named `Recipes` and a container named `Recipes`.
+
+The API connects to the instance using the connection string stored in the application settings. The connection string is stored in the GitHub repository secrets. The connection string name is named `RecipesDocumentDatabase`.
+
+
+## Documentation
+- [EF Core Azure Cosmos DB Provider](https://learn.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli#get-started)
+- [Tutorial: Develop an ASP.NET web application with Azure Cosmos DB for NoSQL](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/tutorial-dotnet-web-app)
+
+# Database (SQL Server, deprecated)
 How to setup a database connection to a SQL Server instance on Azure: https://learn.microsoft.com/en-gb/azure/azure-sql/database/azure-sql-dotnet-entity-framework-core-quickstart?view=azuresql&tabs=visual-studio%2Cazure-portal%2Cportal.
 
 

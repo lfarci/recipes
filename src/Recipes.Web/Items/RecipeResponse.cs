@@ -5,7 +5,7 @@ namespace Recipes.Web;
 public class RecipeResponse
 {
     [JsonPropertyName("id")]
-    public long Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;

@@ -10,7 +10,7 @@ public class RecipeService : WebApiService, IRecipesService
     {
     }
 
-    public async Task<RecipeResponse?> GetRecipe(long recipeId)
+    public async Task<RecipeResponse?> GetRecipe(string recipeId)
     {
         var response = await Get<RecipeResponse>($"recipes/{recipeId}");
         RecipeResponse? recipe = null;
@@ -41,7 +41,7 @@ public class RecipeService : WebApiService, IRecipesService
         await Post("recipes", recipe);
     }
 
-    public async Task DeleteRecipe(long recipeId)
+    public async Task DeleteRecipe(string recipeId)
     {
         await Delete($"recipes/{recipeId}");
     }

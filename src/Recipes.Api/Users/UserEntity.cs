@@ -10,6 +10,6 @@ namespace Recipes.Api.Users
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
 
-        public virtual ICollection<RecipeEntity> Recipes { get; set; } = [];
+        public virtual ICollection<Recipe> Recipes { get; set; } = [];
     }
 }
