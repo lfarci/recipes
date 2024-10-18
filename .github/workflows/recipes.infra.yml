@@ -69,4 +69,4 @@ jobs:
             --resource-group ${{ env.RESOURCE_GROUP }} \
             --template-file main.bicep \
             --parameters dev.bicepparam \
-            --parameters environmentName=${{ env.ENVIROMENT_TAG }}
+            --parameters environmentName=${{ env.ENVIRONMENT_TAG }}
