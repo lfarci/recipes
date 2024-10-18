@@ -1,7 +1,6 @@
 name: Deploy Azure resources
 
 env:
-  RESOURCE_GROUP: 'lfarci-recipes-dev-debug-rg'
   DEPLOYMENT_SCRIPT_IDENTITY: 'app-registration-mi'
   TEMPLATES_DIRECTORY: './infra'
   LOCATION: 'westeurope'
@@ -9,23 +8,30 @@ env:
   AZURE_CLI_VERSION: '2.65.0'
 
 on:
-  workflow_call:
-    inputs:
-      resource_group:
-        description: 'Resource group name'
-        required: false
-        default: 'lfarci-recipes-default-rg'
-        type: string
   push:
     branches:
       - master
     paths:
       - 'infra/**'
   workflow_dispatch:
+    inputs:
+      environment_tag:
+        description: 'Environment tag used to build the resource group name'
+        required: false
+        default: 'dev'
+        type: choice
+        options:
+          - 'debug'
+          - 'dev'
+          - 'test'
+          - 'prd'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    env:
+      RESOURCE_GROUP: 'lfarci-recipes-${{ github.event.inputs.environment_tag }}-rg'
 
     steps:
       - name: Set up Azure CLI
@@ -33,7 +39,7 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Create ${{ env.RESOURCE_GROUP }} resource group
+      - name: Create ${{ env.RESOURCE_GROUP_PREFIX }}${{ env.RESOURCE_GROUP_SUFFIX }} resource group
         run: |
           az group create \
             --name ${{ env.RESOURCE_GROUP }} \
