@@ -37,6 +37,28 @@ if [ -z "$managedIdentityObjectId" ]; then
     exit 1
 fi
 
+# Makes sure the identity is created before assigning the role by querying the identity by object ID.
+echo "Waiting for the managed identity to be created..."
+timeout=30
+elapsed=0
+interval=5
+
+while [ $elapsed -lt $timeout ]; do
+    identityCheck=$(az identity show --ids "$managedIdentityObjectId" --query "id" -o tsv)
+    if [ -n "$identityCheck" ]; then
+        echo "Managed identity $managedIdentityName has been created."
+        break
+    fi
+    echo "Waiting for managed identity $managedIdentityName to be created..."
+    sleep $interval
+    elapsed=$((elapsed + interval))
+done
+
+if [ $elapsed -ge $timeout ]; then
+    echo "Timed out waiting for managed identity $managedIdentityName to be created."
+    exit 1
+fi
+
 graphAppId='00000003-0000-0000-c000-000000000000' # This is a well-known Microsoft Graph application ID.
 graphApiAppRoleName='Application.ReadWrite.All'
 graphApiApplication=$(az ad sp list --filter "appId eq '$graphAppId'" --query "{ appRoleId: [0] .appRoles [?value=='$graphApiAppRoleName'].id | [0], objectId:[0] .id }" -o json)
