@@ -31,9 +31,16 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-managedIdentityObjectId=$(jq -r '.principalId' <<< "$userAssignedIdentity")
-if [ -z "$managedIdentityObjectId" ]; then
-    echo "Failed to retrieve managed identity object ID."
+managedIdentityId=$(jq -r '.id' <<< "$userAssignedIdentity")
+managedIdentityPrincipalId=$(jq -r '.principalId' <<< "$userAssignedIdentity")
+
+if [ -z "$managedIdentityId" ]; then
+    echo "Failed to retrieve managed identityID from the creation response."
+    exit 1
+fi
+
+if [ -z "$managedIdentityPrincipalId" ]; then
+    echo "Failed to retrieve managed identity principal ID from the creation response."
     exit 1
 fi
 
@@ -44,7 +51,7 @@ elapsed=0
 interval=5
 
 while [ $elapsed -lt $timeout ]; do
-    identityCheck=$(az identity show --ids "$managedIdentityObjectId" --query "id" -o tsv)
+    identityCheck=$(az identity show --ids "$managedIdentityId" --query "id" -o tsv)
     if [ -n "$identityCheck" ]; then
         echo "Managed identity $managedIdentityName has been created."
         break
@@ -73,17 +80,17 @@ fi
 
 requestBody=$(jq -n \
                   --arg id "$graphApiAppRoleId" \
-                  --arg principalId "$managedIdentityObjectId" \
+                  --arg principalId "$managedIdentityPrincipalId" \
                   --arg resourceId "$graphServicePrincipalObjectId" \
                   '{principalId: $principalId, resourceId: $resourceId, appRoleId: $id}' )
 
 echo "Assigning role to the managed identity..."
-existingRoleAssignment=$(az rest -m get -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityObjectId/appRoleAssignments" | jq -r ".value[] | select(.appRoleId == \"$graphApiAppRoleId\" and .principalId == \"$managedIdentityObjectId\")")
+existingRoleAssignment=$(az rest -m get -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityId/appRoleAssignments" | jq -r ".value[] | select(.appRoleId == \"$graphApiAppRoleId\" and .principalId == \"$managedIdentityPrincipalId\")")
 
 if [ -n "$existingRoleAssignment" ]; then
     echo "Role assignment already exists for the managed identity."
 else
-    az rest -m post -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityObjectId/appRoleAssignments" -b "$requestBody"
+    az rest -m post -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityId/appRoleAssignments" -b "$requestBody"
     if [ $? -ne 0 ]; then
         echo "Failed to assign role to the managed identity."
         exit 1
