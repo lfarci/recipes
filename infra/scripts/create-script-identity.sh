@@ -1,3 +1,5 @@
+set -f # Disable filename expansion (globbing) to avoid having the identity name expended when startin with a /.
+
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --managed-identity-name) managedIdentityName="$2"; shift ;;
@@ -33,6 +35,7 @@ fi
 
 managedIdentityId=$(jq -r '.id' <<< "$userAssignedIdentity")
 managedIdentityPrincipalId=$(jq -r '.principalId' <<< "$userAssignedIdentity")
+managedIdentityClientId=$(jq -r '.clientId' <<< "$userAssignedIdentity")
 
 if [ -z "$managedIdentityId" ]; then
     echo "Failed to retrieve managed identityID from the creation response."
@@ -41,6 +44,11 @@ fi
 
 if [ -z "$managedIdentityPrincipalId" ]; then
     echo "Failed to retrieve managed identity principal ID from the creation response."
+    exit 1
+fi
+
+if [ -z "$managedIdentityClientId" ]; then
+    echo "Failed to retrieve managed identity client ID from the creation response."
     exit 1
 fi
 
@@ -85,12 +93,12 @@ requestBody=$(jq -n \
                   '{principalId: $principalId, resourceId: $resourceId, appRoleId: $id}' )
 
 echo "Assigning role to the managed identity..."
-existingRoleAssignment=$(az rest -m get -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityId/appRoleAssignments" | jq -r ".value[] | select(.appRoleId == \"$graphApiAppRoleId\" and .principalId == \"$managedIdentityPrincipalId\")")
+existingRoleAssignment=$(az rest -m get -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityClientId/appRoleAssignments" | jq -r ".value[] | select(.appRoleId == \"$graphApiAppRoleId\" and .principalId == \"$managedIdentityPrincipalId\")")
 
 if [ -n "$existingRoleAssignment" ]; then
     echo "Role assignment already exists for the managed identity."
 else
-    az rest -m post -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityId/appRoleAssignments" -b "$requestBody"
+    az rest -m post -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityClientId/appRoleAssignments" -b "$requestBody"
     if [ $? -ne 0 ]; then
         echo "Failed to assign role to the managed identity."
         exit 1
