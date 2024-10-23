@@ -93,12 +93,12 @@ requestBody=$(jq -n \
                   '{principalId: $principalId, resourceId: $resourceId, appRoleId: $id}' )
 
 echo "Assigning role to the managed identity..."
-existingRoleAssignment=$(az rest -m get -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityClientId/appRoleAssignments" | jq -r ".value[] | select(.appRoleId == \"$graphApiAppRoleId\" and .principalId == \"$managedIdentityPrincipalId\")")
+existingRoleAssignment=$(az rest -m get -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityPrincipalId/appRoleAssignments" | jq -r ".value[] | select(.appRoleId == \"$graphApiAppRoleId\" and .principalId == \"$managedIdentityPrincipalId\")")
 
 if [ -n "$existingRoleAssignment" ]; then
     echo "Role assignment already exists for the managed identity."
 else
-    az rest -m post -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityClientId/appRoleAssignments" -b "$requestBody"
+    az rest -m post -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityPrincipalId/appRoleAssignments" -b "$requestBody"
     if [ $? -ne 0 ]; then
         echo "Failed to assign role to the managed identity."
         exit 1
