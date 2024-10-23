@@ -5,7 +5,7 @@ env:
   TEMPLATES_DIRECTORY: './infra'
   LOCATION: 'westeurope'
   SCRIPTS_DIRECTORY: './infra/scripts'
-  AZURE_CLI_VERSION: '2.65.0'
+  AZURE_CLI_VERSION: '2.63.0' # Keep this version as long as there is no update on https://github.com/Azure/cli/issues/165
 
 on:
   push:
