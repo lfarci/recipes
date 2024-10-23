@@ -66,10 +66,13 @@ jobs:
               --location ${{ env.LOCATION }}
 
       - name: Deploy Azure resources to ${{ env.RESOURCE_GROUP }} resource group
-        working-directory: ${{ env.TEMPLATES_DIRECTORY }}
-        run: |
-          az deployment group create \
-            --resource-group ${{ env.RESOURCE_GROUP }} \
-            --template-file main.bicep \
-            --parameters dev.bicepparam \
-            --parameters environmentName=${{ env.ENVIRONMENT_TAG }}
+        uses: azure/cli@v2
+        with:
+          azcliversion: ${{ env.AZURE_CLI_VERSION }}
+          working-directory: ${{ env.TEMPLATES_DIRECTORY }}
+          inlineScript: |
+            az deployment group create \
+              --resource-group ${{ env.RESOURCE_GROUP }} \
+              --template-file main.bicep \
+              --parameters dev.bicepparam \
+              --parameters environmentName=${{ env.ENVIRONMENT_TAG }}
