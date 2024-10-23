@@ -56,6 +56,9 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
 
 module appRegistration 'appRegistration.bicep' = {
   name: 'appRegistration'
+  dependsOn: [
+    keyVault
+  ]
   params: {
     keyVaultName: keyVaultName
     applicationName: applicationRegistrationName
@@ -65,6 +68,9 @@ module appRegistration 'appRegistration.bicep' = {
 
 module databaseModule 'database.bicep' = {
   name: 'database'
+  dependsOn: [
+    keyVault
+  ]
   params: {
     accountName: databaseAccountName
     location: location
@@ -74,6 +80,9 @@ module databaseModule 'database.bicep' = {
 
 module apiModule 'api.bicep' = {
   name: 'api'
+  dependsOn: [
+    keyVault
+  ]
   params: {
     appName: apiName
     entraIdClientId: appRegistration.outputs.applicationClientId
