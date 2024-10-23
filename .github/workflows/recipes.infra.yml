@@ -72,6 +72,6 @@ jobs:
           inlineScript: |
             az deployment group create \
               --resource-group ${{ env.RESOURCE_GROUP }} \
-              --template-file ${{ env.TEMPLATES_DIRECTORY }}/main.bicep \
-              --parameters ${{ env.TEMPLATES_DIRECTORY }}/dev.bicepparam \
+              --template-file "${{ env.TEMPLATES_DIRECTORY }}/main.bicep" \
+              --parameters "${{ env.TEMPLATES_DIRECTORY }}/dev.bicepparam" \
               --parameters environmentName=${{ env.ENVIRONMENT_TAG }}
