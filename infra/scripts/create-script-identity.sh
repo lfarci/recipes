@@ -59,7 +59,7 @@ elapsed=0
 interval=5
 
 while [ $elapsed -lt $timeout ]; do
-    identityCheck=$(az identity show --ids "$managedIdentityId" --query "id" -o tsv)
+    identityCheck=$(az rest -m get -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityPrincipalId")
     if [ -n "$identityCheck" ]; then
         echo "Managed identity $managedIdentityName has been created."
         break
