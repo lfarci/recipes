@@ -42,10 +42,13 @@ jobs:
             echo "RESOURCE_GROUP=lfarci-recipes-${{ github.event.inputs.environment_tag || 'dev' }}-rg" >> $GITHUB_ENV
 
       - name: Create ${{ env.RESOURCE_GROUP }} resource group
-        run: |
-          az group create \
-            --name ${{ env.RESOURCE_GROUP }} \
-            --location ${{ env.LOCATION }}
+        uses: azure/cli@v2
+        with:
+          azcliversion: ${{ env.AZURE_CLI_VERSION }}
+          inlineScript: |
+            az group create \
+              --name ${{ env.RESOURCE_GROUP }} \
+              --location ${{ env.LOCATION }}
 
       - name: Checkout repository
         uses: actions/checkout@v4
