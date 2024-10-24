@@ -6,7 +6,7 @@ param adminUserObjectId string
 param entraIdInstance string
 
 var fullApplicationName = '${applicationName}-${environmentName}'
-var keyVaultName = '${uniqueString(resourceGroup().id)}-kv'
+var keyVaultName = 'app-${uniqueString(resourceGroup().id)}-kv'
 var applicationRegistrationName = '${fullApplicationName}-app'
 var apiName = '${fullApplicationName}-api'
 var databaseAccountName = '${fullApplicationName}-cosmos-db'
