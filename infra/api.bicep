@@ -100,7 +100,6 @@ resource updateAppSettings 'Microsoft.Web/sites/config@2022-09-01' = {
   name: 'appsettings'
   properties: {
     KeyVaultName: keyVaultName
-    AZURE_CLIENT_ID: entraIdClientId
     AzureAd__ClientId: entraIdClientId
     AzureAd__Domain: entraIdDomain
     AzureAd__Instance: entraIdInstance
