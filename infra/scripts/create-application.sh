@@ -9,7 +9,7 @@ printf "\nApplication created with object id: $applicationObjectId and client id
 secretName="$ApplicationName-secret"
 clientSecret=$(az ad app credential reset --id "$applicationClientId" --display-name "$secretName" --query "password" -o "tsv")
 printf "\nClient secret created with name: $secretName"
-az keyvault secret set --vault-name $KeyVaultName --name $secretName --value "$clientSecret"
+az keyvault secret set --vault-name $KeyVaultName --name "Api--ClientSecret" --value "$clientSecret"
 
 if [ $? -ne 0 ]; then
     echo "Failed to set secret in Key Vault: $KeyVaultName"

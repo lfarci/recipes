@@ -122,7 +122,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-04-01-preview' existing = {
 
 resource cosmosDbConnectionString 'Microsoft.KeyVault/vaults/secrets@2021-04-01-preview' = {
   parent: keyVault
-  name: 'CosmosDBConnectionString'
+  name: 'RecipesDocumentDatabase'
   properties: {
     value: databaseAccount.listConnectionStrings().connectionStrings[0].connectionString
   }

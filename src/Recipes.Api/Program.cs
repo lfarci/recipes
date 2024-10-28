@@ -4,12 +4,21 @@ using Microsoft.Identity.Web;
 using Recipes.Api;
 using Recipes.Api.Recipes;
 using Recipes.Api.Users;
+using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+
+// When running the application locally use dotnet user-secrets instead of Key Vault
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddAzureKeyVault(
+        new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
+        new DefaultAzureCredential());
+}
 
 builder.Services.AddAuthorization();
 
@@ -26,8 +35,6 @@ builder.Services.AddLogging(loggingBuilder =>
 var cosmosDbConnectionStringName = "RecipesDocumentDatabase";
 var cosmosDbConnectionString = builder.Configuration.GetConnectionString(cosmosDbConnectionStringName) ??
                        Environment.GetEnvironmentVariable($"DOCDBCONNSTR_{cosmosDbConnectionStringName}");
-
-
 builder.Services
     .AddDbContext<RecipesDbContext>(options => options.UseCosmos(cosmosDbConnectionString!, "Recipes"));
 
