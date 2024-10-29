@@ -23,6 +23,9 @@ printf "\nClient secret saved in key vault: $KeyVaultName"
 servicePrincipal=$(az ad sp create --id $applicationObjectId)
 servicePrincipalObjectId=$(jq -r '.id' <<< "$servicePrincipal")
 
+# Add an application ID URI to the application.
+az ad app update --id $applicationObjectId --identifier-uris "api://$servicePrincipalObjectId"
+
 # Save the important properties as depoyment script outputs.
 outputJson=$(jq -n \
                 --arg applicationObjectId "$applicationObjectId" \
