@@ -86,10 +86,10 @@ module apiModule 'api.bicep' = {
   params: {
     appName: apiName
     entraIdClientId: appRegistration.outputs.applicationClientId
-    entraIdClientSecretName: appRegistration.outputs.clientSecretName
+    entraIdClientSecretName: 'Api--ClientSecret'
     entraIdDomain: 'lfarciava.onmicrosoft.com'
     entraIdInstance: entraIdInstance
-    cosmosDbConnectionStringSecretName: 'CosmosDBConnectionString'
+    cosmosDbConnectionStringSecretName: 'RecipesDocumentDatabase'
     keyVaultName: keyVaultName
   }
 }
