@@ -78,6 +78,7 @@ resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-
         permissions: {
           secrets: [
             'get'
+            'list'
           ]
         }
       }
