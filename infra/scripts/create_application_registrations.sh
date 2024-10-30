@@ -67,6 +67,14 @@ create_app_registration() {
 
     local application=$(jq -c -n --arg id $objectId --arg appId $clientId '{objectId: $id, clientId: $appId}')
 
+    # A service principal is required to complete the application registration. It is used to grant permissions to the client application.
+    az ad sp create --id $clientId
+
+    if [ $? -ne 0 ]; then
+        echo "$FUNCNAME: failed to create a service principal for application ID $clientId."
+        exit 1
+    fi
+
     echo $application
 }
 
@@ -187,13 +195,6 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "API exposed successfully."
-
-# Create a service principal for the application.
-servicePrincipal=$(az ad sp create --id $objectId)
-servicePrincipalObjectId=$(jq -r '.id' <<< "$servicePrincipal")
-
-# Add an application ID URI to the application.
-az ad app update --id $objectId --identifier-uris "api://$servicePrincipalObjectId"
 
 # Save the important properties as depoyment script outputs.
 outputJson=$(jq -n \
