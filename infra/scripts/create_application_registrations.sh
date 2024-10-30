@@ -1,3 +1,13 @@
+if [ -z "$ApplicationName" ]; then
+    echo "Error: ApplicationName environment variables must be set."
+    exit 1
+fi
+
+if [ -z "$KeyVaultName" ]; then
+    echo "Error: KeyVaultName environment variables must be set."
+    exit 1
+fi
+
 # Create the application.
 application=$(az ad app create --display-name $ApplicationName)
 applicationObjectId=$(jq -r '.id' <<< "$application")

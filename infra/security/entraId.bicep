@@ -7,7 +7,7 @@ param applicationName string
 @description('Name of the managed identity to use for the deployment script.')
 param managedIdentityName string = 'deployment-script-identity'
 
-var scriptContent = loadTextContent('./scripts/create-application.sh')
+var scriptContent = loadTextContent('../scripts/create_application_registrations.sh')
 
 @description('The user identity for the deployment script.')
 resource scriptIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2022-01-31-preview' existing = {

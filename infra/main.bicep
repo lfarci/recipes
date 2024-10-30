@@ -18,46 +18,19 @@ resource scriptIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2022-0
   scope: resourceGroup()
 }
 
-resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
-  name: keyVaultName
-  location: location
-  properties: {
-    sku: {
-      family: 'A'
-      name: 'standard'
-    }
-    tenantId: subscription().tenantId
-    accessPolicies: [
-      {
-        tenantId: subscription().tenantId
-        objectId: scriptIdentity.properties.principalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-            'set'
-          ]
-        }
-      }
-      {
-        tenantId: subscription().tenantId
-        objectId: adminUserObjectId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-            'set'
-          ]
-        }
-      }
-    ]
+module keyVaultModule 'security/keyVault.bicep' = {
+  name: 'keyVault'
+  params: {
+    keyVaultName: keyVaultName
+    adminUserObjectId: adminUserObjectId
+    deploymentScriptObjectId: scriptIdentity.properties.principalId
   }
 }
 
-module appRegistration 'appRegistration.bicep' = {
-  name: 'appRegistration'
+module appRegistration 'security/entraId.bicep' = {
+  name: 'entra-id-setup'
   dependsOn: [
-    keyVault
+    keyVaultModule
   ]
   params: {
     keyVaultName: keyVaultName
@@ -69,7 +42,7 @@ module appRegistration 'appRegistration.bicep' = {
 module databaseModule 'database.bicep' = {
   name: 'database'
   dependsOn: [
-    keyVault
+    keyVaultModule
   ]
   params: {
     accountName: databaseAccountName
@@ -78,10 +51,10 @@ module databaseModule 'database.bicep' = {
   }
 }
 
-module apiModule 'api.bicep' = {
+module apiModule 'api/webapp.bicep' = {
   name: 'api'
   dependsOn: [
-    keyVault
+    keyVaultModule
   ]
   params: {
     appName: apiName
