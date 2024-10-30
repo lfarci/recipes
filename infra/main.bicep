@@ -23,6 +23,7 @@ module keyVaultModule 'security/keyVault.bicep' = {
   params: {
     keyVaultName: keyVaultName
     adminUserObjectId: adminUserObjectId
+    location: location
     deploymentScriptObjectId: scriptIdentity.properties.principalId
   }
 }
