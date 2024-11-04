@@ -77,7 +77,7 @@ if [ $elapsed -ge $timeout ]; then
 fi
 
 graphAppId='00000003-0000-0000-c000-000000000000' # This is a well-known Microsoft Graph application ID.
-graphApiAppRoleNames=('Application.ReadWrite.All' 'Directory.Read.All' 'User.Read.All')
+graphApiAppRoleNames=('Application.ReadWrite.All' 'Directory.ReadWrite.All' 'User.Read.All')
 
 for graphApiAppRoleName in "${graphApiAppRoleNames[@]}"; do
     graphApiApplication=$(az ad sp list --filter "appId eq '$graphAppId'" --query "{ appRoleId: [0] .appRoles [?value=='$graphApiAppRoleName'].id | [0], objectId:[0] .id }" -o json)
