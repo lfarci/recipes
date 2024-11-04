@@ -1,3 +1,5 @@
+# FILE: create-script-identity.sh
+
 set -f # Disable filename expansion (globbing) to avoid having the identity name expended when startin with a /.
 
 while [[ "$#" -gt 0 ]]; do
@@ -75,34 +77,37 @@ if [ $elapsed -ge $timeout ]; then
 fi
 
 graphAppId='00000003-0000-0000-c000-000000000000' # This is a well-known Microsoft Graph application ID.
-graphApiAppRoleName='Application.ReadWrite.All'
-graphApiApplication=$(az ad sp list --filter "appId eq '$graphAppId'" --query "{ appRoleId: [0] .appRoles [?value=='$graphApiAppRoleName'].id | [0], objectId:[0] .id }" -o json)
+graphApiAppRoleNames=('Application.ReadWrite.All' 'Directory.Read.All' 'User.Read.All')
 
-graphServicePrincipalObjectId=$(jq -r '.objectId' <<< "$graphApiApplication")
-graphApiAppRoleId=$(jq -r '.appRoleId' <<< "$graphApiApplication")
+for graphApiAppRoleName in "${graphApiAppRoleNames[@]}"; do
+    graphApiApplication=$(az ad sp list --filter "appId eq '$graphAppId'" --query "{ appRoleId: [0] .appRoles [?value=='$graphApiAppRoleName'].id | [0], objectId:[0] .id }" -o json)
 
-if [ -z "$graphServicePrincipalObjectId" ] || [ -z "$graphApiAppRoleId" ]; then
-    echo "Failed to retrieve Graph API application role details."
-    exit 1
-fi
+    graphServicePrincipalObjectId=$(jq -r '.objectId' <<< "$graphApiApplication")
+    graphApiAppRoleId=$(jq -r '.appRoleId' <<< "$graphApiApplication")
 
-requestBody=$(jq -n \
-                  --arg id "$graphApiAppRoleId" \
-                  --arg principalId "$managedIdentityPrincipalId" \
-                  --arg resourceId "$graphServicePrincipalObjectId" \
-                  '{principalId: $principalId, resourceId: $resourceId, appRoleId: $id}' )
-
-echo "Assigning role to the managed identity..."
-existingRoleAssignment=$(az rest -m get -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityPrincipalId/appRoleAssignments" | jq -r ".value[] | select(.appRoleId == \"$graphApiAppRoleId\" and .principalId == \"$managedIdentityPrincipalId\")")
-
-if [ -n "$existingRoleAssignment" ]; then
-    echo "Role assignment already exists for the managed identity."
-else
-    az rest -m post -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityPrincipalId/appRoleAssignments" -b "$requestBody"
-    if [ $? -ne 0 ]; then
-        echo "Failed to assign role to the managed identity."
+    if [ -z "$graphServicePrincipalObjectId" ] || [ -z "$graphApiAppRoleId" ]; then
+        echo "Failed to retrieve Graph API application role details for $graphApiAppRoleName."
         exit 1
     fi
-fi
 
-echo "Managed identity creation and role assignment completed successfully."
+    requestBody=$(jq -n \
+                      --arg id "$graphApiAppRoleId" \
+                      --arg principalId "$managedIdentityPrincipalId" \
+                      --arg resourceId "$graphServicePrincipalObjectId" \
+                      '{principalId: $principalId, resourceId: $resourceId, appRoleId: $id}' )
+
+    echo "Assigning role $graphApiAppRoleName to the managed identity..."
+    existingRoleAssignment=$(az rest -m get -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityPrincipalId/appRoleAssignments" | jq -r ".value[] | select(.appRoleId == \"$graphApiAppRoleId\" and .principalId == \"$managedIdentityPrincipalId\")")
+
+    if [ -n "$existingRoleAssignment" ]; then
+        echo "Role assignment $graphApiAppRoleName already exists for the managed identity."
+    else
+        az rest -m post -u "https://graph.microsoft.com/v1.0/servicePrincipals/$managedIdentityPrincipalId/appRoleAssignments" -b "$requestBody"
+        if [ $? -ne 0 ]; then
+            echo "Failed to assign role $graphApiAppRoleName to the managed identity."
+            exit 1
+        fi
+    fi
+done
+
+echo "Managed identity creation and role assignments completed successfully."
