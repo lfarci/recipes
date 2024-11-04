@@ -15,8 +15,11 @@ builder.Services
 // When running the application locally use dotnet user-secrets instead of Key Vault
 if (!builder.Environment.IsDevelopment())
 {
+    var keyVaultUri = $"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/";
+    Console.WriteLine($"Key Vault URI: {keyVaultUri}");
+
     builder.Configuration.AddAzureKeyVault(
-        new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
+        new Uri(keyVaultUri),
         new DefaultAzureCredential());
 }
 
