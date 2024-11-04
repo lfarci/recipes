@@ -215,9 +215,9 @@ add_graph_permissions() {
         fi
     fi
 
-    echo "Granting API permissions to application ID $clientId."
+    # echo "Granting API permissions to application ID $clientId."
 
-    az ad app permission grant --id $clientId --api $graphApiId --scope "Directory.Read.All" "User.Read.All" --only-show-errors >> /dev/null
+    # az ad app permission grant --id $clientId --api $graphApiId --scope "Directory.Read.All" "User.Read.All" --only-show-errors >> /dev/null
 
     if [ $? -ne 0 ]; then
         echo "$FUNCNAME: failed to grant API permissions to application ID $clientId."
