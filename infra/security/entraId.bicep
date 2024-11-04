@@ -20,7 +20,7 @@ resource scriptIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2022-0
 
 @description('Create a new application in EntraId and store a secret in the Key Vault.')
 resource createApplication 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
-  name: 'createApplicationInEntraId'
+  name: 'entra-id-setup'
   location: resourceGroup().location
   kind: 'AzureCLI'
   identity: {
@@ -54,5 +54,4 @@ resource createApplication 'Microsoft.Resources/deploymentScripts@2023-08-01' = 
 
 output applicationObjectId string = createApplication.properties.outputs.applicationObjectId
 output applicationClientId string = createApplication.properties.outputs.applicationClientId
-output servicePrincipalObjectId string = createApplication.properties.outputs.servicePrincipalObjectId
 output clientSecretName string = createApplication.properties.outputs.clientSecretName
