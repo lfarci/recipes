@@ -7,6 +7,9 @@ param applicationName string
 @description('Name of the managed identity to use for the deployment script.')
 param managedIdentityName string = 'deployment-script-identity'
 
+@description('The redirect URI for the application.')
+param redirectUri string = 'http://localhost'
+
 var scriptContent = loadTextContent('../scripts/create_application_registrations.sh')
 
 @description('The user identity for the deployment script.')
@@ -40,6 +43,10 @@ resource createApplication 'Microsoft.Resources/deploymentScripts@2023-08-01' = 
       {
         name: 'ApplicationName'
         value: applicationName
+      }
+      {
+        name: 'RedirectUri'
+        value: redirectUri
       }
     ]
   }

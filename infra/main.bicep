@@ -37,6 +37,7 @@ module appRegistration 'security/entraId.bicep' = {
     keyVaultName: keyVaultName
     applicationName: applicationRegistrationName
     managedIdentityName: deploymentScriptIdentityName
+    redirectUri: 'https://localhost/authentication/login-callback'
   }
 }
 
