@@ -16,7 +16,6 @@ builder.Services
 if (!builder.Environment.IsDevelopment())
 {
     var keyVaultUri = $"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/";
-    Console.WriteLine($"Key Vault URI: {keyVaultUri}");
 
     builder.Configuration.AddAzureKeyVault(
         new Uri(keyVaultUri),
@@ -36,7 +35,7 @@ builder.Services.AddLogging(loggingBuilder =>
 });
 
 var cosmosDbConnectionStringName = "RecipesDocumentDatabase";
-var cosmosDbConnectionString = builder.Configuration.GetConnectionString(cosmosDbConnectionStringName) ??
+var cosmosDbConnectionString = builder.Configuration[cosmosDbConnectionStringName] ??
                        Environment.GetEnvironmentVariable($"DOCDBCONNSTR_{cosmosDbConnectionStringName}");
 builder.Services
     .AddDbContext<RecipesDbContext>(options => options.UseCosmos(cosmosDbConnectionString!, "Recipes"));
