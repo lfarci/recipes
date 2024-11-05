@@ -148,6 +148,32 @@ expose_an_api() {
         echo "$FUNCNAME: failed to expose an API for application ID $objectId."
         exit 1
     fi
+
+    api=$(cat <<EOF
+        {
+            "oauth2PermissionScopes": [
+                {
+                    "id": "a7f3c80f-e49b-479a-8506-38c798584fa6",
+                    "adminConsentDisplayName": "Access the recipes API",
+                    "adminConsentDescription": "Allow the application to access the recipes API on behalf of the signed-in user.",
+                    "userConsentDisplayName": "Access your recipes",
+                    "userConsentDescription": "Allow the application to access the recipes API on your behalf.",
+                    "type": "User",
+                    "value": "access_as_user",
+                    "isEnabled": true
+                }
+            ],
+            "requestedAccessTokenVersion": 2
+        }
+EOF
+    )
+
+    az ad app update --id $objectId --set api="$api" --verbose
+
+    if [ $? -ne 0 ]; then
+        echo "$FUNCNAME: failed to set OAuth2 permissions for application ID $objectId."
+        exit 1
+    fi
 }
 
 add_redirect_uri() {
