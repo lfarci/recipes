@@ -168,7 +168,7 @@ expose_an_api() {
 EOF
     )
 
-    az ad app update --id $objectId --set api="$api" --verbose
+    az ad app update --id $objectId --set api="$api"
 
     if [ $? -ne 0 ]; then
         echo "$FUNCNAME: failed to set OAuth2 permissions for application ID $objectId."
