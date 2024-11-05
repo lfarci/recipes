@@ -168,6 +168,21 @@ expose_an_api() {
 EOF
     )
 
+    existing_api=$(az ad app show --id $objectId  --query "api" --output json)
+
+    if echo "$existing_api" | jq -e '.oauth2PermissionScopes[] | select(.value == "access_as_user")' > /dev/null; then
+        echo "OAuth2 permission scope 'access_as_user' already exists. It will be disabled and re-added."
+
+        az ad app update --id $objectId --set api="$(echo $api | jq '.oauth2PermissionScopes[0].isEnabled = false' )"
+
+        if [ $? -ne 0 ]; then
+            echo "$FUNCNAME: failed to disable existing OAuth2 permissions for application ID $objectId."
+            exit 1
+        fi
+
+        echo "Existing OAuth2 permission scope 'access_as_user' disabled successfully."
+    fi
+
     az ad app update --id $objectId --set api="$api"
 
     if [ $? -ne 0 ]; then
