@@ -1,7 +1,7 @@
 name: Build and deploy the frontend static web application
 
 env:
-  AZURE_STATIC_WEBAPP_NAME: lfarci-recipes-web-dev
+  AZURE_STATIC_WEBAPP_NAME: lfarci-recipes-dev-site
   DOTNET_VERSION: '8.0.x'
   RECIPES_APP_CSPROJ: 'src/Recipes.Web/Recipes.Web.csproj'
 
