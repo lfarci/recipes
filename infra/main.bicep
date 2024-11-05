@@ -9,6 +9,7 @@ var fullApplicationName = '${applicationName}-${environmentName}'
 var keyVaultName = 'app-${uniqueString(resourceGroup().id)}-kv'
 var applicationRegistrationName = '${fullApplicationName}-app'
 var apiName = '${fullApplicationName}-api'
+var staticSiteName = '${fullApplicationName}-site'
 var databaseAccountName = '${fullApplicationName}-cosmos-db'
 
 
@@ -68,9 +69,10 @@ module apiModule 'api/webapp.bicep' = {
   }
 }
 
-// module webModule 'web.bicep' = {
-//   name: 'webModule'
-//   params: {
-//     // Add parameters required by web.bicep
-//   }
-// }
+module webModule 'web.bicep' = {
+  name: 'webModule'
+  params: {
+    appName: staticSiteName
+    repository: 'https://github.com/lfarci/recipes'
+  }
+}
