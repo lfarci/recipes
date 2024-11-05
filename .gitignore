@@ -486,3 +486,4 @@ $RECYCLE.BIN/
 src/**/bin
 src/**/obj
 **/appsettings.Development.json
+/src/Recipes.Api/appsettings.Test.json

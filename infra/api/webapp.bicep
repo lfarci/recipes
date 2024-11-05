@@ -4,22 +4,17 @@ param appName string
 @description('Entra ID app registration client ID.')
 param entraIdClientId string
 
-@secure()
-@description('Entra ID app registration client secret name. This is used to retrieve the secret from the key vault.')
-param entraIdClientSecretName string
-
 @description('Entra ID tenant domain.')
 param entraIdDomain string
 
 @description('Entra ID instance.')
 param entraIdInstance string
 
-@secure()
-@description('SQL Server instance connection string name. This is used to retrieve the secret from the key vault.')
-param cosmosDbConnectionStringSecretName string
-
 @description('Location for all resources.')
 param location string = resourceGroup().location
+
+@description('The environment name. Default is Development.')
+param environmentName string = 'Test'
 
 @description('The SKU of the App Service Plan. Default is F1.')
 param sku string = 'F1'
@@ -86,16 +81,6 @@ resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-
   }
 }
 
-resource cosmosDbConnectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' existing = {
-  parent: keyVault
-  name: cosmosDbConnectionStringSecretName
-}
-
-resource entraIdClientSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' existing = {
-  parent: keyVault
-  name: entraIdClientSecretName
-}
-
 resource updateAppSettings 'Microsoft.Web/sites/config@2022-09-01' = {
   parent: webApp
   name: 'appsettings'
@@ -105,18 +90,7 @@ resource updateAppSettings 'Microsoft.Web/sites/config@2022-09-01' = {
     AzureAd__Domain: entraIdDomain
     AzureAd__Instance: entraIdInstance
     AzureAd__TenantId: subscription().tenantId
-    Api__ClientSecret: entraIdClientSecret.properties.secretUriWithVersion
-  }
-}
-
-resource updateConnectionStrings 'Microsoft.Web/sites/config@2022-09-01' = {
-  parent: webApp
-  name: 'connectionstrings'
-  properties: {
-    RecipesDocumentDatabase: {
-      value: cosmosDbConnectionStringSecret.properties.secretUriWithVersion
-      type: 'DocDb'
-    }
+    ASPNETCORE_ENVIRONMENT: environmentName
   }
 }
 
