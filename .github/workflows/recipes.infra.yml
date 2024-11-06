@@ -85,8 +85,8 @@ jobs:
         run: |
           outputs=$(jq -r ".outputs" deployment_output.json)
 
-          gh variable set API_CLIENT_ID -b $(echo $outputs | jq -r '.apiClientId.value')
-          gh variable set API_URI -b $(echo $outputs | jq -r '.apiUri.value')
-          gh variable set SITE_CLIENT_ID -b $(echo $outputs | jq -r '.siteClientId.value')
-          gh variable set SITE_URI -b $(echo $outputs | jq -r '.siteUri.value')
-          gh variable set TENANT_ID -b $(echo $outputs | jq -r '.tenantId.value')
+          gh secret set API_CLIENT_ID -b $(echo $outputs | jq -r '.apiClientId.value')
+          gh secret set API_URI -b $(echo $outputs | jq -r '.apiUri.value')
+          gh secret set SITE_CLIENT_ID -b $(echo $outputs | jq -r '.siteClientId.value')
+          gh secret set SITE_URI -b $(echo $outputs | jq -r '.siteUri.value')
+          gh secret set TENANT_ID -b $(echo $outputs | jq -r '.tenantId.value')
