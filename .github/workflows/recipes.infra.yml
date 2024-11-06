@@ -65,7 +65,8 @@ jobs:
               --tenant-id ${{ vars.AZURE_TENANT_ID }} \
               --location ${{ env.LOCATION }}
 
-      - name: Deploy Azure resources to ${{ env.RESOURCE_GROUP }} resource group
+      - id: deploy_azure_resources
+        name: Deploy Azure resources to ${{ env.RESOURCE_GROUP }} resource group
         uses: azure/cli@v2
         with:
           azcliversion: ${{ env.AZURE_CLI_VERSION }}
@@ -75,3 +76,7 @@ jobs:
               --template-file "${{ env.TEMPLATES_DIRECTORY }}/main.bicep" \
               --parameters "${{ env.TEMPLATES_DIRECTORY }}/dev.bicepparam" \
               --parameters environmentName=${{ env.ENVIRONMENT_TAG }}
+
+      - name: Set deployment output in the repository secrets
+        run: |
+          echo "::debug::${{ steps.deploy_azure_resources.outputs.outputs }}"
