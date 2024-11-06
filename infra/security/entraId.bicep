@@ -4,6 +4,9 @@ param keyVaultName string
 @description('Name of the API to create in EntraId.')
 param apiName string
 
+@description('Name of the static site to create in EntraId.')
+param siteName string
+
 @description('Name of the managed identity to use for the deployment script.')
 param managedIdentityName string = 'deployment-script-identity'
 
@@ -45,6 +48,10 @@ resource createApplication 'Microsoft.Resources/deploymentScripts@2023-08-01' = 
         value: apiName
       }
       {
+        name: 'SiteName'
+        value: siteName
+      }
+      {
         name: 'RedirectUri'
         value: redirectUri
       }
@@ -52,6 +59,5 @@ resource createApplication 'Microsoft.Resources/deploymentScripts@2023-08-01' = 
   }
 }
 
-output applicationObjectId string = createApplication.properties.outputs.applicationObjectId
-output applicationClientId string = createApplication.properties.outputs.applicationClientId
-output clientSecretName string = createApplication.properties.outputs.clientSecretName
+output apiClientId string = createApplication.properties.outputs.apiClientId
+output siteClientId string = createApplication.properties.outputs.siteClientId

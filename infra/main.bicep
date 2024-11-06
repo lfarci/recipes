@@ -46,6 +46,7 @@ module appRegistration 'security/entraId.bicep' = {
   params: {
     keyVaultName: keyVaultName
     apiName: apiName
+    siteName: staticSiteName
     managedIdentityName: deploymentScriptIdentityName
     redirectUri: frontendAuthenticationCallback
   }
@@ -70,7 +71,7 @@ module apiModule 'api/webapp.bicep' = {
   ]
   params: {
     appName: apiName
-    entraIdClientId: appRegistration.outputs.applicationClientId
+    entraIdClientId: appRegistration.outputs.apiClientId
     entraIdDomain: 'lfarciava.onmicrosoft.com'
     entraIdInstance: entraIdInstance
     keyVaultName: keyVaultName
@@ -78,8 +79,9 @@ module apiModule 'api/webapp.bicep' = {
   }
 }
 
-output staticWebAppUri string = webModule.outputs.uri
-// output staticWebAppClientId string = webModule.outputs.appName
+output siteUri string = webModule.outputs.uri
+output siteClientId string = appRegistration.outputs.siteClientId
 
 output apiUri string = apiModule.outputs.uri
-output apiClientId string = appRegistration.outputs.applicationClientId
+output apiClientId string = appRegistration.outputs.apiClientId
+output tenantId string = subscription().tenantId

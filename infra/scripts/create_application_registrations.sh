@@ -256,20 +256,56 @@ add_graph_permissions() {
         fi
     fi
 
-    # echo "Granting API permissions to application ID $clientId."
+    echo "API permissions added successfully."
+}
 
-    # az ad app permission grant --id $clientId --api $graphApiId --scope "Directory.Read.All" "User.Read.All" --only-show-errors >> /dev/null
+add_recipes_api_permissions() {
+    local site_client_id=$1
+    local api_client_id=$2
 
-    if [ $? -ne 0 ]; then
-        echo "$FUNCNAME: failed to grant API permissions to application ID $clientId."
+    local access_as_user_permission_id="a7f3c80f-e49b-479a-8506-38c798584fa6"
+
+    if [ -z "$site_client_id" ]; then
+        echo "$FUNCNAME: Static site client ID parameter must be provided."
         exit 1
     fi
 
-    echo "API permissions added and granted successfully."
+    if [ -z "$api_client_id" ]; then
+        echo "$FUNCNAME: API client ID parameter must be provided."
+        exit 1
+    fi
+
+    local existing_permissions=$(az ad app permission list --id $clientId --query "[].resourceAccess[].id" -o tsv)
+
+    if [ $? -ne 0 ]; then
+        echo "$FUNCNAME: failed to find existing permissions for the static site. Client ID: $site_client_id."
+        exit 1
+    fi
+
+    if [[ $existing_permissions == *"$access_as_user_permission_id"* ]]; then
+        echo "The permission $access_as_user_permission_id is already set. It won't be added again."
+        return
+    fi
+
+    echo "Adding API permissions: $access_as_user_permission_id"
+
+    az ad app permission add --id $site_client_id --api $api_client_id --api-permissions "$access_as_user_permission_id=Scope" --only-show-errors
+
+    if [ $? -ne 0 ]; then
+        echo "$FUNCNAME: failed to add API permissions to application ID $site_client_id."
+        exit 1
+    fi
+
+    echo "API permissions added successfully."
 }
 
 if [ -z "$ApiName" ]; then
     echo "Error: ApiName environment variables must be set."
+    exit 1
+fi
+
+if [ -z "$SiteName" ]; then
+    echo "Error: SiteName environment variables must be set."
     exit 1
 fi
 
@@ -288,7 +324,7 @@ printf "\n- API name: $ApiName"
 printf "\n- Key vault name: $KeyVaultName"
 printf "\n- Redirect uri is set to: $RedirectUri\n"
 
-application=$(create_app_registration $ApiName)
+api_json=$(create_app_registration $ApiName)
 
 if [ $? -ne 0 ]; then
     printf "\nFailed to create application registration for the API."
@@ -297,8 +333,8 @@ else
     printf "\nApplication registration named $ApiName created successfully for the API."
 fi
 
-api_client_id=$(jq -r '.clientId' <<< "$application")
-api_object_id=$(jq -r '.objectId' <<< "$application")
+api_client_id=$(jq -r '.clientId' <<< "$api_json")
+api_object_id=$(jq -r '.objectId' <<< "$api_json")
 
 if [ -z "$api_client_id" ]; then
     printf "\nFailed to retrieve client ID for application registration named $ApiName."
@@ -360,11 +396,37 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+site_json=$(create_app_registration $SiteName)
+
+if [ $? -ne 0 ]; then
+    printf "\nFailed to create application registration for the static site."
+    exit 1
+else
+    printf "\nApplication registration named $SiteName created successfully for the static site."
+fi
+
+site_client_id=$(jq -r '.clientId' <<< "$site_json")
+
+if [ -z "$site_client_id" ]; then
+    printf "\nFailed to retrieve client ID for application registration named $SiteName."
+    exit 1
+else
+    printf "\nClient ID for application registration named $SiteName is $site_client_id."
+fi
+
+add_recipes_api_permissions $site_client_id $api_client_id
+
+if [ $? -ne 0 ]; then
+    printf "\nFailed to add API permissions for application ID $site_client_id."
+    exit 1
+else
+    printf "\nAPI permissions added successfully for application ID $site_client_id."
+fi
+
 outputJson=$(jq -n \
-                --arg applicationObjectId "$api_object_id" \
-                --arg applicationClientId "$api_client_id" \
-                --arg clientSecretName "Api--ClientSecret" \
-                '{applicationObjectId: $applicationObjectId, applicationClientId: $applicationClientId, clientSecretName: $clientSecretName }' )
+                --arg apiClientId "$api_client_id" \
+                --arg siteClientId "$site_client_id" \
+                '{apiClientId: $apiClientId, siteClientId: $siteClientId }' )
 
 echo "Output: $outputJson"
     
