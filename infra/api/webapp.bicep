@@ -94,4 +94,4 @@ resource updateAppSettings 'Microsoft.Web/sites/config@2022-09-01' = {
   }
 }
 
-output webAppUrl string = webApp.properties.defaultHostName
+output uri string = webApp.properties.defaultHostName

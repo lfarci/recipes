@@ -7,7 +7,6 @@ param entraIdInstance string
 
 var fullApplicationName = '${applicationName}-${environmentName}'
 var keyVaultName = 'app-${uniqueString(resourceGroup().id)}-kv'
-var applicationRegistrationName = '${fullApplicationName}-app'
 var apiName = '${fullApplicationName}-api'
 var staticSiteName = '${fullApplicationName}-site'
 var databaseAccountName = '${fullApplicationName}-cosmos-db'
@@ -29,6 +28,16 @@ module keyVaultModule 'security/keyVault.bicep' = {
   }
 }
 
+module webModule 'web.bicep' = {
+  name: 'webModule'
+  params: {
+    appName: staticSiteName
+    repository: 'https://github.com/lfarci/recipes'
+  }
+}
+
+var frontendAuthenticationCallback = '${webModule.outputs.uri}/authentication/login-callback'
+
 module appRegistration 'security/entraId.bicep' = {
   name: 'entra-id-setup'
   dependsOn: [
@@ -36,9 +45,9 @@ module appRegistration 'security/entraId.bicep' = {
   ]
   params: {
     keyVaultName: keyVaultName
-    applicationName: applicationRegistrationName
+    apiName: apiName
     managedIdentityName: deploymentScriptIdentityName
-    redirectUri: 'https://localhost/authentication/login-callback'
+    redirectUri: frontendAuthenticationCallback
   }
 }
 
@@ -69,10 +78,8 @@ module apiModule 'api/webapp.bicep' = {
   }
 }
 
-module webModule 'web.bicep' = {
-  name: 'webModule'
-  params: {
-    appName: staticSiteName
-    repository: 'https://github.com/lfarci/recipes'
-  }
-}
+output staticWebAppUri string = webModule.outputs.uri
+// output staticWebAppClientId string = webModule.outputs.appName
+
+output apiUri string = apiModule.outputs.uri
+output apiClientId string = appRegistration.outputs.applicationClientId

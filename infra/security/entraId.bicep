@@ -1,8 +1,8 @@
 @description('Name of the key vault to store the client secret into.')
 param keyVaultName string
 
-@description('Name of the application to create in EntraId.')
-param applicationName string
+@description('Name of the API to create in EntraId.')
+param apiName string
 
 @description('Name of the managed identity to use for the deployment script.')
 param managedIdentityName string = 'deployment-script-identity'
@@ -41,8 +41,8 @@ resource createApplication 'Microsoft.Resources/deploymentScripts@2023-08-01' = 
         value: keyVaultName
       }
       {
-        name: 'ApplicationName'
-        value: applicationName
+        name: 'ApiName'
+        value: apiName
       }
       {
         name: 'RedirectUri'

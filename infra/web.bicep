@@ -31,3 +31,5 @@ resource staticWebAppBasicAuth 'Microsoft.Web/staticSites/basicAuth@2023-12-01' 
     applicableEnvironmentsMode: 'SpecifiedEnvironments'
   }
 }
+
+output uri string = staticWebApp.properties.defaultHostname
