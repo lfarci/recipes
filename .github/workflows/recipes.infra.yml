@@ -75,8 +75,15 @@ jobs:
               --resource-group ${{ env.RESOURCE_GROUP }} \
               --template-file "${{ env.TEMPLATES_DIRECTORY }}/main.bicep" \
               --parameters "${{ env.TEMPLATES_DIRECTORY }}/dev.bicepparam" \
-              --parameters environmentName=${{ env.ENVIRONMENT_TAG }}
+              --parameters environmentName=${{ env.ENVIRONMENT_TAG }} \
+              --query "{outputs: properties.outputs}" > deployment_output.json
 
       - name: Set deployment output in the repository secrets
         run: |
-          echo "::debug::${{ steps.deploy_azure_resources.outputs }}"
+          outputs=$(jq -r ".outputs" deployment_output.json)
+
+          echo "::debug::API Client ID: $(echo $outputs | jq -r '.apiClientId.value')"
+          echo "::debug::API URI: $(echo $outputs | jq -r '.apiUri.value')"
+          echo "::debug::Site Client ID: $(echo $outputs | jq -r '.siteClientId.value')"
+          echo "::debug::Site URI: $(echo $outputs | jq -r '.siteUri.value')"
+
