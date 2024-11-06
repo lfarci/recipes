@@ -78,12 +78,15 @@ jobs:
               --parameters environmentName=${{ env.ENVIRONMENT_TAG }} \
               --query "{outputs: properties.outputs}" > deployment_output.json
 
+      - name: Authenticate to GitHub CLI
+        run: gh auth login --with-token < ${{ secrets.GITHUB_TOKEN }}
+
       - name: Set deployment output in the repository secrets
         run: |
           outputs=$(jq -r ".outputs" deployment_output.json)
 
-          echo "::debug::API Client ID: $(echo $outputs | jq -r '.apiClientId.value')"
-          echo "::debug::API URI: $(echo $outputs | jq -r '.apiUri.value')"
-          echo "::debug::Site Client ID: $(echo $outputs | jq -r '.siteClientId.value')"
-          echo "::debug::Site URI: $(echo $outputs | jq -r '.siteUri.value')"
-
+          gh variable set API_CLIENT_ID -b $(echo $outputs | jq -r '.apiClientId.value')
+          gh variable set API_URI -b $(echo $outputs | jq -r '.apiUri.value')
+          gh variable set SITE_CLIENT_ID -b $(echo $outputs | jq -r '.siteClientId.value')
+          gh variable set SITE_URI -b $(echo $outputs | jq -r '.siteUri.value')
+          gh variable set TENANT_ID -b $(echo $outputs | jq -r '.tenantId.value')
