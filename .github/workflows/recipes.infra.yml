@@ -30,6 +30,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    permissions: 
+
+
     steps:
       - name: Set up Azure CLI
         uses: azure/login@v2
@@ -79,14 +82,14 @@ jobs:
               --query "{outputs: properties.outputs}" > deployment_output.json
 
       - name: Authenticate to GitHub CLI
-        run: echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+        run: echo ${{ secrets.VARIABLES_PAT }} | gh auth login --with-token
 
       - name: Set deployment output in the repository secrets
         run: |
           outputs=$(jq -r ".outputs" deployment_output.json)
 
-          gh secret set API_CLIENT_ID -b $(echo $outputs | jq -r '.apiClientId.value')
-          gh secret set API_URI -b $(echo $outputs | jq -r '.apiUri.value')
-          gh secret set SITE_CLIENT_ID -b $(echo $outputs | jq -r '.siteClientId.value')
-          gh secret set SITE_URI -b $(echo $outputs | jq -r '.siteUri.value')
-          gh secret set TENANT_ID -b $(echo $outputs | jq -r '.tenantId.value')
+          gh variable set API_CLIENT_ID -b $(echo $outputs | jq -r '.apiClientId.value')
+          gh variable set API_URI -b $(echo $outputs | jq -r '.apiUri.value')
+          gh variable set SITE_CLIENT_ID -b $(echo $outputs | jq -r '.siteClientId.value')
+          gh variable set SITE_URI -b $(echo $outputs | jq -r '.siteUri.value')
+          gh variable set TENANT_ID -b $(echo $outputs | jq -r '.tenantId.value')
