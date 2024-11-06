@@ -268,8 +268,8 @@ add_graph_permissions() {
     echo "API permissions added and granted successfully."
 }
 
-if [ -z "$ApplicationName" ]; then
-    echo "Error: ApplicationName environment variables must be set."
+if [ -z "$ApiName" ]; then
+    echo "Error: ApiName environment variables must be set."
     exit 1
 fi
 
@@ -284,67 +284,67 @@ if [ -z "$RedirectUri" ]; then
 fi
 
 printf "Starting executiing script to create application registration (command line call: $0).\n"
-printf "\n- Application name: $ApplicationName"
+printf "\n- API name: $ApiName"
 printf "\n- Key vault name: $KeyVaultName"
 printf "\n- Redirect uri is set to: $RedirectUri\n"
 
-application=$(create_app_registration $ApplicationName)
+application=$(create_app_registration $ApiName)
 
 if [ $? -ne 0 ]; then
-    printf "\nFailed to create application registration."
+    printf "\nFailed to create application registration for the API."
     exit 1
 else
-    printf "\nApplication registration named $ApplicationName created successfully."
+    printf "\nApplication registration named $ApiName created successfully for the API."
 fi
 
-clientId=$(jq -r '.clientId' <<< "$application")
-objectId=$(jq -r '.objectId' <<< "$application")
+api_client_id=$(jq -r '.clientId' <<< "$application")
+api_object_id=$(jq -r '.objectId' <<< "$application")
 
-if [ -z "$clientId" ]; then
-    printf "\nFailed to retrieve client ID for application registration named $ApplicationName."
+if [ -z "$api_client_id" ]; then
+    printf "\nFailed to retrieve client ID for application registration named $ApiName."
     exit 1
 else
-    printf "\nClient ID for application registration named $ApplicationName is $clientId."
+    printf "\nClient ID for application registration named $ApiName is $api_client_id."
 fi
 
-if [ -z "$objectId" ]; then
-    printf "\nFailed to retrieve object ID for application registration named $ApplicationName."
+if [ -z "$api_object_id" ]; then
+    printf "\nFailed to retrieve object ID for application registration named $ApiName."
     exit 1
 else
-    printf "\nObject ID for application registration named $ApplicationName is $objectId."
+    printf "\nObject ID for application registration named $ApiName is $api_object_id."
 fi
 
-expose_an_api $objectId $clientId
+expose_an_api $api_object_id $api_client_id
 
 if [ $? -ne 0 ]; then
-    printf "\nFailed to expose an API for application ID $objectId."
+    printf "\nFailed to expose an API for application ID $api_object_id."
     exit 1
 else
     printf "\nAPI exposed successfully."
 fi
 
-add_redirect_uri $clientId $RedirectUri
+add_redirect_uri $api_client_id $RedirectUri
 
 if [ $? -ne 0 ]; then
-    printf "\nFailed to add redirect URI for application ID $clientId."
+    printf "\nFailed to add redirect URI for application ID $api_client_id."
     exit 1
 else
     printf "\nRedirect URI added successfully: $RedirectUri."
 fi
 
-clientSecret=$(create_app_registration_secret $clientId "ApiSecret")
+clientSecret=$(create_app_registration_secret $api_client_id "ApiSecret")
 
 if [ $? -ne 0 ]; then
-    printf "\nFailed to create client secret for application ID $clientId."
+    printf "\nFailed to create client secret for application ID $api_client_id."
     exit 1
 else
-    printf "\nClient secret named ApiSecret created successfully for application ID $clientId."
+    printf "\nClient secret named ApiSecret created successfully for application ID $api_client_id."
 fi
 
 store_secret_in_keyvault $KeyVaultName "Api--ClientSecret" $clientSecret
 
 if [ $? -ne 0 ]; then
-    printf "\nFailed to store client secret for application ID $clientId in Key Vault named $KeyVaultName."
+    printf "\nFailed to store client secret for application ID $api_client_id in Key Vault named $KeyVaultName."
     exit 1
 else
     printf "\nClient secret named Api--ClientSecret created successfully in Key Vault named $KeyVaultName."
@@ -353,16 +353,16 @@ fi
 unset $clientSecret
 printf "\nClient secret saved in key vault: $KeyVaultName"
 
-add_graph_permissions $clientId
+add_graph_permissions $api_client_id
 
 if [ $? -ne 0 ]; then
-    printf "\nFailed to add graph permissions for application ID $clientId."
+    printf "\nFailed to add graph permissions for application ID $api_client_id."
     exit 1
 fi
 
 outputJson=$(jq -n \
-                --arg applicationObjectId "$objectId" \
-                --arg applicationClientId "$clientId" \
+                --arg applicationObjectId "$api_object_id" \
+                --arg applicationClientId "$api_client_id" \
                 --arg clientSecretName "Api--ClientSecret" \
                 '{applicationObjectId: $applicationObjectId, applicationClientId: $applicationClientId, clientSecretName: $clientSecretName }' )
 
