@@ -79,7 +79,7 @@ jobs:
               --query "{outputs: properties.outputs}" > deployment_output.json
 
       - name: Authenticate to GitHub CLI
-        run: gh auth login --with-token < ${{ secrets.GITHUB_TOKEN }}
+        run: echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
 
       - name: Set deployment output in the repository secrets
         run: |
