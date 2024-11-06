@@ -3,6 +3,7 @@ name: Build and deploy the frontend static web application
 env:
   AZURE_STATIC_WEBAPP_NAME: lfarci-recipes-dev-site
   DOTNET_VERSION: '8.0.x'
+  SCRIPTS_DIRECTORY: './infra/scripts'
   RECIPES_APP_CSPROJ: 'src/Recipes.Web/Recipes.Web.csproj'
 
 on:
@@ -38,6 +39,15 @@ jobs:
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp ${{ env.RECIPES_APP_CSPROJ }}
+
+      - name: Create appsettings.json
+        run: |
+          chmod +x ${{ env.SCRIPTS_DIRECTORY }}/create_site_appsettings.sh
+          ${{ env.SCRIPTS_DIRECTORY }}/create-script-identity.sh \
+            --managed-identity-name ${{ env.DEPLOYMENT_SCRIPT_IDENTITY }} \
+            --resource-group-name ${{ env.RESOURCE_GROUP }} \
+            --tenant-id ${{ vars.AZURE_TENANT_ID }} \
+            --location ${{ env.LOCATION }}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
