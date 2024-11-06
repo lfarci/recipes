@@ -36,7 +36,7 @@ module webModule 'web.bicep' = {
   }
 }
 
-var frontendAuthenticationCallback = '${webModule.outputs.uri}/authentication/login-callback'
+var frontendAuthenticationCallback = 'https://${webModule.outputs.uri}/authentication/login-callback'
 
 module appRegistration 'security/entraId.bicep' = {
   name: 'entra-id-setup'
