@@ -49,7 +49,7 @@ jobs:
             --uri ${{ vars.SITE_URI }} \
             --api-id ${{ vars.API_CLIENT_ID }} \
             --api-uri ${{ vars.API_URI }} \
-            --tenant-id ${{ vars.TENANT_ID }} \
+            --tenant-id ${{ secrets.AZURE_TENANT_ID }} \
             --output ${{env.DOTNET_ROOT}}/myapp/wwwroot/appsettings.json
 
       - name: Upload artifact for deployment job
