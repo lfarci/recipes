@@ -5,6 +5,7 @@ env:
   DOTNET_VERSION: '8.0.x'
   SCRIPTS_DIRECTORY: './infra/scripts'
   RECIPES_APP_CSPROJ: 'src/Recipes.Web/Recipes.Web.csproj'
+  AZURE_CLI_VERSION: '2.63.0' # Keep this version as long as there is no update on https://github.com/Azure/cli/issues/165
 
 on:
   push:
@@ -21,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up .NET Core
+      - name: Set up .NET Core ${{ env.DOTNET_VERSION }}
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
@@ -43,11 +44,13 @@ jobs:
       - name: Create appsettings.json
         run: |
           chmod +x ${{ env.SCRIPTS_DIRECTORY }}/create_site_appsettings.sh
-          ${{ env.SCRIPTS_DIRECTORY }}/create-script-identity.sh \
-            --managed-identity-name ${{ env.DEPLOYMENT_SCRIPT_IDENTITY }} \
-            --resource-group-name ${{ env.RESOURCE_GROUP }} \
-            --tenant-id ${{ vars.AZURE_TENANT_ID }} \
-            --location ${{ env.LOCATION }}
+          ${{ env.SCRIPTS_DIRECTORY }}/create_site_appsettings.sh \
+            --id ${{ vars.SITE_CLIENT_ID }} \
+            --uri ${{ vars.SITE_URI }} \
+            --api-id ${{ vars.API_CLIENT_ID }} \
+            --api-uri ${{ vars.API_URI }} \
+            --tenant-id ${{ vars.TENANT_ID }} \
+            --output ${{env.DOTNET_ROOT}}/myapp/wwwroot/appsettings.json
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -69,11 +72,24 @@ jobs:
         with:
           name: blazor-wasm-app
 
-      - name: Deploy to Azure Static Web App
+      - name: Set up Azure CLI
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get deployment token for ${{ env.AZURE_STATIC_WEBAPP_NAME }} static web app
+        uses: azure/cli@v2
+        with:
+          azcliversion: ${{ env.AZURE_CLI_VERSION }}
+          inlineScript: |
+            token=$(az staticwebapp secrets list --name ${{ vars.SITE_NAME }} | jq -r ".properties.apiKey")
+            echo "DEPLOYMENT_TOKEN=$token" >> $GITHUB_ENV
+
+      - name: Deploy to ${{ env.AZURE_STATIC_WEBAPP_NAME }} static web app
         id: deploy-to-static-webapp
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          azure_static_web_apps_api_token: ${{ secrets.DEPLOYMENT_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "wwwroot"

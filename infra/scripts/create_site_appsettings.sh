@@ -23,6 +23,12 @@ echo "AzureAd:Authority: https://login.microsoftonline.com/$tenant_id"
 echo "AzureAd:ClientId: $id"
 echo "AzureAd:DefaultAccessTokenScopes: api://$api_id/.default"
 
+if [ -f "$output" ]; then
+    echo "File $output already exists. Overwriting..."
+else
+    echo "Creating file $output..."
+fi
+
 cat > $output <<EOL
 {
   "BaseAddress": "$uri",

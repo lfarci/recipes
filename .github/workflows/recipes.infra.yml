@@ -85,8 +85,16 @@ jobs:
         run: |
           outputs=$(jq -r ".outputs" deployment_output.json)
 
+          gh variable set TENANT_ID -b $(echo $outputs | jq -r '.tenantId.value')
+
+          gh variable set KEY_VAULT_NAME -b $(echo $outputs | jq -r '.keyVaultName.value')
+          gh variable set DATABASE_ACCOUNT_NAME -b $(echo $outputs | jq -r '.datebaseAccountName.value')
+
+          gh variable set API_NAME -b $(echo $outputs | jq -r '.apiName.value')
           gh variable set API_CLIENT_ID -b $(echo $outputs | jq -r '.apiClientId.value')
           gh variable set API_URI -b $(echo $outputs | jq -r '.apiUri.value')
+
+          gh variable set SITE_NAME -b $(echo $outputs | jq -r '.staticSiteName.value')
           gh variable set SITE_CLIENT_ID -b $(echo $outputs | jq -r '.siteClientId.value')
           gh variable set SITE_URI -b $(echo $outputs | jq -r '.siteUri.value')
-          gh variable set TENANT_ID -b $(echo $outputs | jq -r '.tenantId.value')
+          

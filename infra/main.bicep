@@ -79,9 +79,15 @@ module apiModule 'api/webapp.bicep' = {
   }
 }
 
-output siteUri string = webModule.outputs.uri
-output siteClientId string = appRegistration.outputs.siteClientId
+output tenantId string = subscription().tenantId
 
+output keyVaultName string = keyVaultName
+output datebaseAccountName string = databaseAccountName
+
+output apiName string = apiName
 output apiUri string = apiModule.outputs.uri
 output apiClientId string = appRegistration.outputs.apiClientId
-output tenantId string = subscription().tenantId
+
+output staticSiteName string = staticSiteName
+output siteUri string = webModule.outputs.uri
+output siteClientId string = appRegistration.outputs.siteClientId
