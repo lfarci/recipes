@@ -62,7 +62,7 @@ jobs:
             ${{ env.SCRIPTS_DIRECTORY }}/create-script-identity.sh \
               --managed-identity-name ${{ env.DEPLOYMENT_SCRIPT_IDENTITY }} \
               --resource-group-name ${{ env.RESOURCE_GROUP }} \
-              --tenant-id ${{ vars.AZURE_TENANT_ID }} \
+              --tenant-id ${{ secrets.AZURE_TENANT_ID }} \
               --location ${{ env.LOCATION }}
 
       - id: deploy_azure_resources
@@ -84,8 +84,6 @@ jobs:
       - name: Set deployment output in the repository secrets
         run: |
           outputs=$(jq -r ".outputs" deployment_output.json)
-
-          gh variable set TENANT_ID -b $(echo $outputs | jq -r '.tenantId.value')
 
           gh variable set KEY_VAULT_NAME -b $(echo $outputs | jq -r '.keyVaultName.value')
           gh variable set DATABASE_ACCOUNT_NAME -b $(echo $outputs | jq -r '.datebaseAccountName.value')
