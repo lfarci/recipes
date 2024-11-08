@@ -31,8 +31,8 @@ fi
 
 cat > $output <<EOL
 {
-  "BaseAddress": "$uri",
-  "RecipesApiAddress": "$api_uri",
+  "BaseAddress": "https://$uri",
+  "RecipesApiAddress": "https://$api_uri",
   "AzureAd": {
     "Authority": "https://login.microsoftonline.com/$tenant_id",
     "ClientId": "$id",
