@@ -212,7 +212,7 @@ add_redirect_uri() {
     if [[ $existing_redirect_uris == *$uri* ]]; then
         printf "\nThe URI $uri is already in the list"
     else
-        printf "\nAdding the URI $uri to the list"
+        printf "\nAdding the URI $uri to the list for $id object ID."
 
         # Cannot set a redirect URI for a SPA. Issue: https://github.com/Azure/azure-cli/issues/25766
         # az ad app update --id $clientId --web-redirect-uris $existing_redirect_uris $uri
