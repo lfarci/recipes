@@ -288,7 +288,7 @@ add_recipes_api_permissions() {
         exit 1
     fi
 
-    local existing_permissions=$(az ad app permission list --id $clientId --query "[].resourceAccess[].id" -o tsv)
+    local existing_permissions=$(az ad app permission list --id $site_client_id --query "[].resourceAccess[].id" -o tsv)
 
     if [ $? -ne 0 ]; then
         echo "$FUNCNAME: failed to find existing permissions for the static site. Client ID: $site_client_id."
