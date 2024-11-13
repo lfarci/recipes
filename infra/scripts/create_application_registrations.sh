@@ -192,11 +192,11 @@ EOF
 }
 
 add_redirect_uri() {
-    local clientId=$1
+    local id=$1
     local uri=$2
 
-    if [ -z "$clientId" ]; then
-        echo "$FUNCNAME: clientId parameter must be provided."
+    if [ -z "$id" ]; then
+        echo "$FUNCNAME: id parameter must be provided."
         exit 1
     fi
 
@@ -206,7 +206,7 @@ add_redirect_uri() {
     fi
 
     # Get string array of existing redirect URIs
-    existing_redirect_uris=$(az ad app show --id $clientId --query "[spa.redirectUris]" --output tsv)
+    existing_redirect_uris=$(az ad app show --id $id --query "[spa.redirectUris]" --output tsv)
 
     # Check if the new URI is already in the list
     if [[ $existing_redirect_uris == *$uri* ]]; then
@@ -219,12 +219,12 @@ add_redirect_uri() {
 
         az rest \
             --method "patch" \
-            --uri "https://graph.microsoft.com/v1.0/applications/$clientId" \
+            --uri "https://graph.microsoft.com/v1.0/applications/$id" \
             --headers "{'Content-Type': 'application/json'}" \
             --body "{'spa': {'redirectUris': [ '$uri' ]}}"
         
         if [ $? -ne 0 ]; then
-            echo "$FUNCNAME: failed to add redirect URI for application ID $clientId."
+            echo "$FUNCNAME: failed to add redirect URI for application ID $id."
             exit 1
         fi
     fi
@@ -410,12 +410,20 @@ else
 fi
 
 site_client_id=$(jq -r '.clientId' <<< "$site_json")
+site_object_id=$(jq -r '.objectId' <<< "$site_json")
 
 if [ -z "$site_client_id" ]; then
     printf "\nFailed to retrieve client ID for application registration named $SiteName."
     exit 1
 else
     printf "\nClient ID for application registration named $SiteName is $site_client_id."
+fi
+
+if [ -z "$site_object_id" ]; then
+    printf "\nFailed to retrieve object ID for application registration named $SiteName."
+    exit 1
+else
+    printf "\nObject ID for application registration named $SiteName is $site_object_id."
 fi
 
 add_recipes_api_permissions $site_client_id $api_client_id
@@ -427,7 +435,7 @@ else
     printf "\nAPI permissions added successfully for application ID $site_client_id."
 fi
 
-add_redirect_uri $site_client_id $RedirectUri
+add_redirect_uri $site_object_id $RedirectUri
 
 if [ $? -ne 0 ]; then
     printf "\nFailed to add redirect URI for application ID $api_client_id."
