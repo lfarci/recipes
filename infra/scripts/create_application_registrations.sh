@@ -359,15 +359,6 @@ else
     printf "\nAPI exposed successfully."
 fi
 
-add_redirect_uri $api_client_id $RedirectUri
-
-if [ $? -ne 0 ]; then
-    printf "\nFailed to add redirect URI for application ID $api_client_id."
-    exit 1
-else
-    printf "\nRedirect URI added successfully: $RedirectUri."
-fi
-
 clientSecret=$(create_app_registration_secret $api_client_id "ApiSecret")
 
 if [ $? -ne 0 ]; then
@@ -421,6 +412,15 @@ if [ $? -ne 0 ]; then
     exit 1
 else
     printf "\nAPI permissions added successfully for application ID $site_client_id."
+fi
+
+add_redirect_uri $site_client_id $RedirectUri
+
+if [ $? -ne 0 ]; then
+    printf "\nFailed to add redirect URI for application ID $api_client_id."
+    exit 1
+else
+    printf "\nRedirect URI added successfully: $RedirectUri."
 fi
 
 outputJson=$(jq -n \
