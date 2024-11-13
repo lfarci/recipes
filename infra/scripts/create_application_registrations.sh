@@ -206,7 +206,7 @@ add_redirect_uri() {
     fi
 
     # Get string array of existing redirect URIs
-    existing_redirect_uris=$(az ad app show --id $clientId --query "[web.redirectUris]" --output tsv)
+    existing_redirect_uris=$(az ad app show --id $clientId --query "[spa.redirectUris]" --output tsv)
 
     # Check if the new URI is already in the list
     if [[ $existing_redirect_uris == *$uri* ]]; then
