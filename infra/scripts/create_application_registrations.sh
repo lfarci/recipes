@@ -213,7 +213,20 @@ add_redirect_uri() {
         printf "\nThe URI $uri is already in the list"
     else
         printf "\nAdding the URI $uri to the list"
-        az ad app update --id $clientId --web-redirect-uris $existing_redirect_uris $uri
+
+        # Cannot set a redirect URI for a SPA. Issue: https://github.com/Azure/azure-cli/issues/25766
+        # az ad app update --id $clientId --web-redirect-uris $existing_redirect_uris $uri
+
+        az rest \
+            --method "patch" \
+            --uri "https://graph.microsoft.com/v1.0/applications/$clientId" \
+            --headers "{'Content-Type': 'application/json'}" \
+            --body "{'spa': {'redirectUris': [ '$uri' ]}}"
+        
+        if [ $? -ne 0 ]; then
+            echo "$FUNCNAME: failed to add redirect URI for application ID $clientId."
+            exit 1
+        fi
     fi
 }
 
