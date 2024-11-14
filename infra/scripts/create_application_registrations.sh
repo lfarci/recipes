@@ -233,8 +233,8 @@ add_redirect_uri() {
 add_graph_permissions() {
     local clientId=$1
     local graphApiId="00000003-0000-0000-c000-000000000000"
-    local userReadPermissionId="a154be20-db9c-4678-8ab7-66f6cc099a59"
-    local directoryReadPermissionId="06da0dbc-49e2-44d2-8312-53f166ab848a"
+    local userReadPermissionId="e1fe6dd8-ba31-4d61-89e7-88639da4683d"
+    local userReadBasicPermissionId="b340eb25-3456-403f-be2f-af7a0d370277"
 
     if [ -z "$clientId" ]; then
         echo "$FUNCNAME: clientId parameter must be provided."
@@ -244,16 +244,16 @@ add_graph_permissions() {
     local existing_permissions=$(az ad app permission list --id $clientId --query "[].resourceAccess[].id" -o tsv)
     local to_add_permissions=()
 
-    if [[ $existing_permissions == *"$directoryReadPermissionId"* ]]; then
-        echo "The permission $directoryReadPermissionId is already set. It won't be added again."
+    if [[ $existing_permissions == *"$userReadBasicPermissionId"* ]]; then
+        echo "The permission $userReadBasicPermissionId is already set. It won't be added again."
     else
-        to_add_permissions+=($directoryReadPermissionId) # Directory.Read.All
+        to_add_permissions+=($userReadBasicPermissionId) # User.ReadBasic.All
     fi
 
     if [[ $existing_permissions == *"$userReadPermissionId"* ]]; then
         echo "The permission $userReadPermissionId is already set. It won't be added again."
     else
-        to_add_permissions+=($userReadPermissionId) # User.Read.All
+        to_add_permissions+=($userReadPermissionId) # User.Read
     fi
 
     if [ ${#to_add_permissions[@]} -eq 0 ]; then
@@ -433,6 +433,15 @@ if [ $? -ne 0 ]; then
     exit 1
 else
     printf "\nAPI permissions added successfully for application ID $site_client_id."
+fi
+
+add_graph_permissions $site_client_id
+
+if [ $? -ne 0 ]; then
+    printf "\nFailed to add graph permissions for application ID $site_client_id."
+    exit 1
+else
+    printf "\nGraph permissions added successfully for application ID $site_client_id."
 fi
 
 add_redirect_uri $site_object_id $RedirectUri
