@@ -39,6 +39,26 @@ namespace Recipes.Api.Users
             return objectIdClaim.Value;
         }
 
+        private string GetAccessTokenFromContext()
+        {
+            var authorization = Http?.Request.Headers.Authorization;
+
+            if (authorization is null)
+            {
+                return string.Empty;
+            }
+
+            var accessToken = authorization?.ToString().Replace("Bearer ", string.Empty);
+
+            return accessToken ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Get a graph service client using a on-behalf-of provider as described in the documentation.
+        /// 
+        /// https://learn.microsoft.com/en-us/graph/sdks/choose-authentication-providers?tabs=csharp#on-behalf-of-provider
+        /// </summary>
+        /// <returns></returns>
         private GraphServiceClient GetGraphClient()
         {
             var scopes = new[] { "https://graph.microsoft.com/.default" };
@@ -47,14 +67,16 @@ namespace Recipes.Api.Users
             var tenantId = _configuration["AzureAd:TenantId"];
             var clientSecret = _configuration["Api:ClientSecret"];
 
-            var options = new ClientSecretCredentialOptions
+            var options = new OnBehalfOfCredentialOptions
             {
                 AuthorityHost = AzureAuthorityHosts.AzurePublicCloud,
             };
 
-            var clientSecretCredential = new ClientSecretCredential(tenantId, clientId, clientSecret, options);
+            var incomingToken = GetAccessTokenFromContext();
 
-            return new GraphServiceClient(clientSecretCredential, scopes);
+            var onBehalfOfCredential = new OnBehalfOfCredential(tenantId, clientId, clientSecret, incomingToken, options);
+
+            return new GraphServiceClient(onBehalfOfCredential, scopes);
         }
 
         private async Task<User?> FindUserFromGraph(string userId)
