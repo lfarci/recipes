@@ -44,6 +44,7 @@ jobs:
       - name: Create appsettings.json
         run: |
           echo '{
+            "Origin": "MyWorkflows",
             "BaseAddress": "https://mango-ground-0ec3cdf03.5.azurestaticapps.net",
             "RecipesApiAddress": "https://lfarci-recipes-dev-api.azurewebsites.net",
             "AzureAd": {
@@ -51,7 +52,7 @@ jobs:
               "ClientId": "${{ vars.SITE_CLIENT_ID }}",
               "ValidateAuthority": true,
               "DefaultAccessTokenScopes": [
-                "api://${{ vars.API_CLIENT_ID }}/access_as_user",
+                "api://f9488c9f-706e-4c27-811b-cfae3b782afe/access_as_user",
                 "User.Read",
                 "User.ReadBasic.All"
               ]
