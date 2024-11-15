@@ -15,16 +15,14 @@ on:
       - 'infra/**'
   workflow_dispatch:
     inputs:
-      environment_tag:
+      environment:
         description: 'Environment tag used to build the resource group name'
         required: false
-        default: 'dev'
+        default: 'Development'
         type: choice
         options:
-          - 'debug'
-          - 'dev'
-          - 'test'
-          - 'prd'
+          - 'Test'
+          - 'Production'
 
 jobs:
   deploy:
@@ -38,8 +36,24 @@ jobs:
 
       - name: Set resource group name
         run: |
-            echo "ENVIRONMENT_TAG=${{ github.event.inputs.environment_tag || 'dev' }}" >> $GITHUB_ENV
-            echo "RESOURCE_GROUP=lfarci-recipes-${{ github.event.inputs.environment_tag || 'dev' }}-rg" >> $GITHUB_ENV
+            environment=${{ github.event.inputs.environment || 'Development' }}
+            case $environment in
+              'Development')
+                tag='dev'
+                ;;
+              'Test')
+                tag='tst'
+                ;;
+              'Production')
+                tag='prd'
+                ;;
+              *)
+                tag='dev'
+                ;;
+            esac
+            echo "ENVIRONMENT_TAG=$tag" >> $GITHUB_ENV
+            echo "ENVIRONMENT_NAME=$environment" >> $GITHUB_ENV
+            echo "RESOURCE_GROUP=lfarci-recipes-${{ github.event.inputs.environment || 'dev' }}-rg" >> $GITHUB_ENV
 
       - name: Create ${{ env.RESOURCE_GROUP }} resource group
         uses: azure/cli@v2
@@ -85,14 +99,13 @@ jobs:
         run: |
           outputs=$(jq -r ".outputs" deployment_output.json)
 
-          gh variable set KEY_VAULT_NAME -b $(echo $outputs | jq -r '.keyVaultName.value')
-          gh variable set DATABASE_ACCOUNT_NAME -b $(echo $outputs | jq -r '.datebaseAccountName.value')
+          gh variable set KEY_VAULT_NAME -e $ENVIRONMENT_NAME -b $(echo $outputs | jq -r '.keyVaultName.value')
+          gh variable set DATABASE_ACCOUNT_NAME -e $ENVIRONMENT_NAME -b $(echo $outputs | jq -r '.datebaseAccountName.value')
 
-          gh variable set API_NAME -b $(echo $outputs | jq -r '.apiName.value')
-          gh variable set API_CLIENT_ID -b $(echo $outputs | jq -r '.apiClientId.value')
-          gh variable set API_URI -b $(echo $outputs | jq -r '.apiUri.value')
+          gh variable set API_NAME -e $ENVIRONMENT_NAME -b $(echo $outputs | jq -r '.apiName.value')
+          gh variable set API_CLIENT_ID -e $ENVIRONMENT_NAME -b $(echo $outputs | jq -r '.apiClientId.value')
+          gh variable set API_URI -e $ENVIRONMENT_NAME -b $(echo $outputs | jq -r '.apiUri.value')
 
-          gh variable set SITE_NAME -b $(echo $outputs | jq -r '.staticSiteName.value')
-          gh variable set SITE_CLIENT_ID -b $(echo $outputs | jq -r '.siteClientId.value')
-          gh variable set SITE_URI -b $(echo $outputs | jq -r '.siteUri.value')
-          
+          gh variable set SITE_NAME -e $ENVIRONMENT_NAME -b $(echo $outputs | jq -r '.staticSiteName.value')
+          gh variable set SITE_CLIENT_ID -e $ENVIRONMENT_NAME -b $(echo $outputs | jq -r '.siteClientId.value')
+          gh variable set SITE_URI -e $ENVIRONMENT_NAME -b $(echo $outputs | jq -r '.siteUri.value')
