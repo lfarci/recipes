@@ -47,7 +47,7 @@ jobs:
             --api-id ${{ vars.API_CLIENT_ID }} \
             --api-uri ${{ vars.API_URI }} \
             --tenant-id ${{ secrets.AZURE_TENANT_ID }} \
-            --output ${{env.DOTNET_ROOT}}/myapp/wwwroot/appsettings.json
+            --output src/Recipes.Web/wwwroot/appsettings.json
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp ${{ env.RECIPES_APP_CSPROJ }}
