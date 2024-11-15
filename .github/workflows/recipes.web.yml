@@ -47,7 +47,7 @@ jobs:
             "BaseAddress": "https://${{ vars.SITE_URI }}",
             "RecipesApiAddress": "https://${{ vars.API_URI }}",
             "AzureAd": {
-              "Authority": "https://login.microsoftonline.com/${{ secrets.AZURE_TENANT_ID }}",
+              "Authority": "https://login.microsoftonline.com/ffa5591d-cae2-492c-8674-129a6be07489",
               "ClientId": "${{ vars.SITE_CLIENT_ID }}",
               "ValidateAuthority": true,
               "DefaultAccessTokenScopes": [
