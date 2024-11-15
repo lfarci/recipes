@@ -21,6 +21,7 @@ on:
         default: 'Development'
         type: choice
         options:
+          - 'Development'
           - 'Test'
           - 'Production'
 
@@ -51,6 +52,7 @@ jobs:
                 tag='dev'
                 ;;
             esac
+
             echo "ENVIRONMENT_TAG=$tag" >> $GITHUB_ENV
             echo "ENVIRONMENT_NAME=$environment" >> $GITHUB_ENV
             echo "RESOURCE_GROUP=lfarci-recipes-${{ github.event.inputs.environment || 'dev' }}-rg" >> $GITHUB_ENV
