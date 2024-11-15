@@ -40,21 +40,14 @@ jobs:
 
       - name: Create appsettings.json
         run: |
-          echo '{
-            "Origin": "MyWorkflows",
-            "BaseAddress": "https://mango-ground-0ec3cdf03.5.azurestaticapps.net",
-            "RecipesApiAddress": "https://lfarci-recipes-dev-api.azurewebsites.net",
-            "AzureAd": {
-              "Authority": "https://login.microsoftonline.com/ffa5591d-cae2-492c-8674-129a6be07489",
-              "ClientId": "${{ vars.SITE_CLIENT_ID }}",
-              "ValidateAuthority": true,
-              "DefaultAccessTokenScopes": [
-                "api://f9488c9f-706e-4c27-811b-cfae3b782afe/access_as_user",
-                "User.Read",
-                "User.ReadBasic.All"
-              ]
-            }
-          }' > src/Recipes.Web/wwwroot/appsettings.json
+          chmod +x ${{ env.SCRIPTS_DIRECTORY }}/create_site_appsettings.sh
+          ${{ env.SCRIPTS_DIRECTORY }}/create_site_appsettings.sh \
+            --id ${{ vars.SITE_CLIENT_ID }} \
+            --uri ${{ vars.SITE_URI }} \
+            --api-id ${{ vars.API_CLIENT_ID }} \
+            --api-uri ${{ vars.API_URI }} \
+            --tenant-id ${{ secrets.AZURE_TENANT_ID }} \
+            --output ${{env.DOTNET_ROOT}}/myapp/wwwroot/appsettings.json
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp ${{ env.RECIPES_APP_CSPROJ }}
