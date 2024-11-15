@@ -55,7 +55,7 @@ jobs:
 
             echo "ENVIRONMENT_TAG=$tag" >> $GITHUB_ENV
             echo "ENVIRONMENT_NAME=$environment" >> $GITHUB_ENV
-            echo "RESOURCE_GROUP=lfarci-recipes-$ENVIRONMENT_TAG-rg" >> $GITHUB_ENV
+            echo "RESOURCE_GROUP=lfarci-recipes-$tag-rg" >> $GITHUB_ENV
 
       - name: Create ${{ env.RESOURCE_GROUP }} resource group
         uses: azure/cli@v2
