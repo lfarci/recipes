@@ -116,6 +116,30 @@ resource databaseAccounts_lfarci_discover_cosmos_db_account_name_00000000_0000_0
   }
 }
 
+resource sqlDatabase 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2024-05-15' = {
+  parent: databaseAccount
+  name: 'Recipes'
+  properties: {
+    resource: {
+      id: 'Recipes'
+    }
+  }
+}
+
+resource sqlContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-05-15' = {
+  parent: sqlDatabase
+  name: 'Recipes'
+  properties: {
+    resource: {
+      id: 'Recipes'
+      partitionKey: {
+        paths: ['/ownerId']
+        kind: 'Hash'
+      }
+    }
+  }
+}
+
 resource keyVault 'Microsoft.KeyVault/vaults@2021-04-01-preview' existing = {
   name: keyVaultName
 }
