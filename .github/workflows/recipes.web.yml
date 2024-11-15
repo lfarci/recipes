@@ -44,8 +44,8 @@ jobs:
       - name: Create appsettings.json
         run: |
           echo '{
-            "BaseAddress": "https://${{ vars.SITE_URI }}",
-            "RecipesApiAddress": "https://${{ vars.API_URI }}",
+            "BaseAddress": "https://mango-ground-0ec3cdf03.5.azurestaticapps.net",
+            "RecipesApiAddress": "https://lfarci-recipes-dev-api.azurewebsites.net",
             "AzureAd": {
               "Authority": "https://login.microsoftonline.com/ffa5591d-cae2-492c-8674-129a6be07489",
               "ClientId": "${{ vars.SITE_CLIENT_ID }}",
