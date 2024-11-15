@@ -67,6 +67,8 @@ namespace Recipes.Api.Users
             var tenantId = _configuration["AzureAd:TenantId"];
             var clientSecret = _configuration["Api:ClientSecret"];
 
+            _logger.LogInformation("Creating GraphServiceClient with tenantId: {TenantId}, clientId: {ClientId}, clientSecret: {ClientSecret}", tenantId, clientId, clientSecret);
+
             var options = new OnBehalfOfCredentialOptions
             {
                 AuthorityHost = AzureAuthorityHosts.AzurePublicCloud,
