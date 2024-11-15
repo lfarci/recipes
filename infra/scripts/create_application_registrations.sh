@@ -90,6 +90,18 @@ create_app_registration_secret() {
         exit 1
     fi
 
+    existing_secret=$(az ad app credential list --id "$clientId" --query "[?displayName=='$secretName'].{value: secretText}" -o tsv --only-show-errors)
+
+    if [ $? -ne 0 ]; then
+        echo "$FUNCNAME: failed to retrieve existing client secrets for client ID $clientId."
+        exit 1
+    fi
+
+    if [ -n "$existing_secret" ]; then
+        echo "$FUNCNAME: client secret with name $secretName already exists. It won't be reset."
+        return
+    fi
+
     local clientSecret=$(az ad app credential reset --id "$clientId" --display-name "$secretName" --query "password" -o "tsv" --only-show-errors)
 
     if [ $? -ne 0 ]; then
@@ -119,6 +131,15 @@ store_secret_in_keyvault() {
         echo "$FUNCNAME: secretValue parameter must be provided."
         exit 1
     fi
+
+    existing_secret=$(az keyvault secret show --vault-name $keyVaultName --name $secretName --query "value" -o tsv --only-show-errors)
+
+    if [ $? -eq 0 ]; then
+        echo "$FUNCNAME: secret with name $secretName already exists in Key Vault $keyVaultName. It won't be stored."
+        return
+    fi
+
+    echo "Storing secret in Key Vault: $keyVaultName"
 
     az keyvault secret set --vault-name $keyVaultName --name $secretName --value $secretValue --only-show-errors >> /dev/null
 
