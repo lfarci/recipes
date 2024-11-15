@@ -69,4 +69,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
+# Convert line endings to CRLF using sed
+sed -i 's/$/\r/' "$output_file"
+
 echo "Configuration file created successfully at $output_file."
