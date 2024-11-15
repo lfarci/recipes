@@ -50,7 +50,7 @@ jq -n \
   --arg api_id "$api_id" \
   '{
   BaseAddress: ("https://" + $uri),
-  RecipesApiAddress: ("https://" + $api_uri + "/"),
+  RecipesApiAddress: ("https://" + $api_uri),
   AzureAd: {
     Authority: ("https://login.microsoftonline.com/" + $tenant_id),
     ClientId: $client_id,
@@ -71,5 +71,8 @@ fi
 
 # Convert line endings to CRLF using sed
 sed -i 's/$/\r/' "$output_file"
+
+# Ensure the file is saved with UTF-8 encoding without BOM
+iconv -f utf-8 -t utf-8 "$output_file" -o "$output_file"
 
 echo "Configuration file created successfully at $output_file."
