@@ -35,27 +35,10 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Set resource group name
+      - name: Set environment
         run: |
-            environment=${{ github.event.inputs.environment || 'Development' }}
-            case $environment in
-              'Development')
-                tag='dev'
-                ;;
-              'Test')
-                tag='tst'
-                ;;
-              'Production')
-                tag='prd'
-                ;;
-              *)
-                tag='dev'
-                ;;
-            esac
-
-            echo "ENVIRONMENT_TAG=$tag" >> $GITHUB_ENV
-            echo "ENVIRONMENT_NAME=$environment" >> $GITHUB_ENV
-            echo "RESOURCE_GROUP=lfarci-recipes-$tag-rg" >> $GITHUB_ENV
+            chmod +x ${{ env.SCRIPTS_DIRECTORY }}/set_environment.sh
+            ${{ env.SCRIPTS_DIRECTORY }}/set_environment.sh --environment ${{ github.event.inputs.environment || 'Development' }}
 
       - name: Create ${{ env.RESOURCE_GROUP }} resource group
         uses: azure/cli@v2
