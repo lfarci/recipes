@@ -3,6 +3,7 @@ name: Deploy Azure resources
 env:
   DEPLOYMENT_SCRIPT_IDENTITY: 'app-registration-mi'
   TEMPLATES_DIRECTORY: './infra'
+  INFRASTRUCTURE_DIRECTORY: './infra'
   LOCATION: 'westeurope'
   SCRIPTS_DIRECTORY: './infra/scripts'
   AZURE_CLI_VERSION: '2.63.0' # Keep this version as long as there is no update on https://github.com/Azure/cli/issues/165
@@ -35,29 +36,30 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Set environment
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Add execute permission to scripts
+        run: chmod +x ${{ env.SCRIPTS_DIRECTORY }}/*.sh
+
+      
+
+      - name: Set environment variables
+        working-directory: ${{ env.INFRASTRUCTURE_DIRECTORY }}
         run: |
-            chmod +x ${{ env.SCRIPTS_DIRECTORY }}/set_environment.sh
-            ${{ env.SCRIPTS_DIRECTORY }}/set_environment.sh --environment ${{ github.event.inputs.environment || 'Development' }}
+          scripts/set_environment.sh --environment "${{ github.event.inputs.environment || 'Development' }}"
 
       - name: Create ${{ env.RESOURCE_GROUP }} resource group
         uses: azure/cli@v2
         with:
           azcliversion: ${{ env.AZURE_CLI_VERSION }}
-          inlineScript: |
-            az group create \
-              --name ${{ env.RESOURCE_GROUP }} \
-              --location ${{ env.LOCATION }}
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
+          inlineScript: az group create --name ${{ env.RESOURCE_GROUP }} --location ${{ env.LOCATION }}
 
       - name: Create managed identity for the deployment script
         uses: azure/cli@v2
         with:
           azcliversion: ${{ env.AZURE_CLI_VERSION }}
           inlineScript: |
-            chmod +x ${{ env.SCRIPTS_DIRECTORY }}/create-script-identity.sh
             ${{ env.SCRIPTS_DIRECTORY }}/create-script-identity.sh \
               --managed-identity-name ${{ env.DEPLOYMENT_SCRIPT_IDENTITY }} \
               --resource-group-name ${{ env.RESOURCE_GROUP }} \
