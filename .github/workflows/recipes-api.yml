@@ -67,7 +67,6 @@ jobs:
 
     environment:
       name: ${{ github.event.inputs.environment || 'Development' }}
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
       - name: Set up Azure CLI
