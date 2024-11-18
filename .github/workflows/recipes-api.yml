@@ -13,6 +13,16 @@ on:
       - 'src/Recipes.Api/**'
 
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment tag used to build the resource group name'
+        required: false
+        default: 'Development'
+        type: choice
+        options:
+          - 'Development'
+          - 'Test'
+          - 'Production'
 
 permissions:
   contents: read
@@ -54,8 +64,9 @@ jobs:
       contents: none
     runs-on: ubuntu-latest
     needs: build
+
     environment:
-      name: 'Development'
+      name: ${{ github.event.inputs.environment || 'Development' }}
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
