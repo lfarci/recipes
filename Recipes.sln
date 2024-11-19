@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.34902.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Recipes.Database", "src\Recipes.Database\Recipes.Database.sqlproj", "{EF645E71-4624-4A02-AA18-C554E02277B4}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Recipes.Api", "src\Recipes.Api\Recipes.Api.csproj", "{D74A78F2-1549-4A71-A022-BEFBE55124D6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Recipes.Web", "src\Recipes.Web\Recipes.Web.csproj", "{6D2C0D2F-3950-409B-A420-E11DDA9DFE01}"
@@ -15,12 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EF645E71-4624-4A02-AA18-C554E02277B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EF645E71-4624-4A02-AA18-C554E02277B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EF645E71-4624-4A02-AA18-C554E02277B4}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{EF645E71-4624-4A02-AA18-C554E02277B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EF645E71-4624-4A02-AA18-C554E02277B4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EF645E71-4624-4A02-AA18-C554E02277B4}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{D74A78F2-1549-4A71-A022-BEFBE55124D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D74A78F2-1549-4A71-A022-BEFBE55124D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D74A78F2-1549-4A71-A022-BEFBE55124D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
